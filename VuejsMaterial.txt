@@ -841,8 +841,290 @@ createBlock: ƒ createBlock(type, props, children, patchFlag, dynamicProps)
 createCommentVNode: ƒ createCommentVNode(text = '', // when used as the v-else branch, the comment node must be created as a // block to ensure correct updates. asBlock = false)
 createElementBlock: ƒ createElementBlock(type, props, children, patchFlag, 
 etc...
+.....................................................................................
+			  User interface Development
+.....................................................................................
+
+User interface development guidelines:
+
+1.User interface must be broken into smallar and smallar -  Compostion - Component model
+
+2.User interface is organized in hierachal structure -  Tree Structure 
+  Thats where html has been designed.
+ We need to follow html tree model
+
+ <div>
+    <div>
+	<div>
+	   
+	</div>
+	
+    </div>
+ </div>
+
+3.In tree model there must be one root element
+
+..................................................................................
+				Root Component(root Element)
+
+
+In React:
+ function Logo(){
+   
+   return <img src="logo.png"/>
+ 
+}
+In Angular
+
+ @Component({
+   selector:'app-logo'
+   template:`<img src="logo.png"/>
+ }) 
+ export class Logo{
+
+ }
+In Vue:
+ Component is object which is represented as literal object.
+
+const Logo ={
+
+}
 ....................................................................................
-		
+
+First UI:
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script async src="https://ga.jspm.io/npm:es-module-shims@1.5.5/dist/es-module-shims.js"></script>
+    <!-- <script src="src/index.js" type="module"></script> -->
+    <script type="importmap">
+       {
+         "imports":{
+             "vue" : "https://unpkg.com/vue@3/dist/vue.esm-browser.js"
+         }
+       }
+    </script>
+</head>
+
+<body>
+    <div id="root">
+
+    </div>
+
+    <script type="module">
+        import { createApp } from 'vue'
+        //create application object
+        const app = createApp({
+            template: `<div>
+                    <h1>Welcome to Vue js Applicaiton</h1>    
+            </div>`
+        })
+        console.log(app)
+        //will mount/insert the template into existing html tree
+        app.mount('#root')
+
+    </script>
+
+</body>
+
+</html>
+.....................................................................................
+		   How to isloate component into separate file 
+
+src/components/RootComponent.js
+
+
+export default {
+    template: '<h1>Welcome</h1>'
+}
+
+index.html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script async src="https://ga.jspm.io/npm:es-module-shims@1.5.5/dist/es-module-shims.js"></script>
+    <!-- <script src="src/index.js" type="module"></script> -->
+    <script type="importmap">
+       {
+         "imports":{
+             "vue" : "https://unpkg.com/vue@3/dist/vue.esm-browser.js",
+             "root" : "./src/components/RootComponent.js"
+         }
+       }
+    </script>
+</head>
+
+<body>
+    <div id="root">
+
+    </div>
+
+    <script type="module">
+        import { createApp } from 'vue'
+        import rootComponent from 'root'
+        //component definition
+
+        //create application object
+        const app = createApp(rootComponent)
+        console.log(app)
+        //will mount/insert the template into existing html tree
+        app.mount('#root')
+
+    </script>
+
+</body>
+
+</html>
+.....................................................................................
+				Component Composition
+....................................................................................
+
+As we discussed, HTML is based on tree pattern, similar way we have design UI - we have to break ui into components, and finally we have to compose.
+
+src/components/WelcomeCompoent.js
+
+export default {
+    template: '<h1>Welcome</h1>'
+}
+
+src/components/RootComponent.js
+import WelcomeComponent from "./WelcomeComponent.js"
+
+export default {
+    components: { WelcomeComponent },
+    template: '<WelcomeComponent></WelcomeComponent>'
+}
+
+index.html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script async src="https://ga.jspm.io/npm:es-module-shims@1.5.5/dist/es-module-shims.js"></script>
+    <!-- <script src="src/index.js" type="module"></script> -->
+    <script type="importmap">
+       {
+         "imports":{
+             "vue" : "https://unpkg.com/vue@3/dist/vue.esm-browser.js",
+             "root" : "./src/components/RootComponent.js"
+         }
+       }
+    </script>
+</head>
+
+<body>
+    <div id="root">
+	
+    </div>
+
+    <script type="module">
+        import { createApp } from 'vue'
+        import rootComponent from 'root'
+        //component definition
+
+        //create application object
+        const app = createApp(rootComponent)
+        console.log(app)
+        //will mount/insert the template into existing html tree
+        app.mount('#root')
+
+    </script>
+
+</body>
+
+</html>
+
+.....................................................................................
+				Component Properties
+................................................................................
+
+What a Component Contains?
+
+const Welcome = {
+ template:'',
+ components:{},
+ render:'',
+ compilerOptions:{},
+ data:function(){}
+}
+etc..
+
+component information can be categorized into various segments
+
+1.UI/Rendering - HTML,CSS(Markup)
+..................................
+ template
+ render
+ compilerOptions
+
+2.State -(data) - javascript
+ data 
+ props
+ computed
+ methods
+ watch
+ emits
+ expose
+
+3.Life Cycle hooks(methods)
+beforeCreate
+created
+beforeMount
+mounted
+beforeUpdate
+updated
+beforeUnmount
+unmounted
+errorCaptured
+renderTracked
+renderTriggered
+activated
+deactivated
+serverPrefetch
+
+4.Composition
+ provide
+ inject
+ mixins
+ extends
+
+Misc
+name
+inheritAttrs
+components
+directives
+
+Component Instance api
+$data
+$props
+$el
+$options
+$parent
+$root
+$slots
+$refs
+$attrs
+$watch()
+$emit()
+$forceUpdate()
+$nextTick()
+
+
+
+
+
+
 
 
 

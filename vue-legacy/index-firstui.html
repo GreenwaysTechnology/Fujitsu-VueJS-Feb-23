@@ -10,8 +10,7 @@
     <script type="importmap">
        {
          "imports":{
-             "vue" : "https://unpkg.com/vue@3/dist/vue.esm-browser.js",
-             "root" : "./src/components/RootComponent.js"
+             "vue" : "https://unpkg.com/vue@3/dist/vue.esm-browser.js"
          }
        }
     </script>
@@ -24,11 +23,12 @@
 
     <script type="module">
         import { createApp } from 'vue'
-        import rootComponent from 'root'
-        //component definition
-
         //create application object
-        const app = createApp(rootComponent)
+        const app = createApp({
+            template: `<div>
+                    <h1>Welcome to Vue js Applicaiton</h1>    
+            </div>`
+        })
         console.log(app)
         //will mount/insert the template into existing html tree
         app.mount('#root')
