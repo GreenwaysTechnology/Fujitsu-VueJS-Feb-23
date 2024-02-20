@@ -10,8 +10,7 @@
     <script type="importmap">
        {
          "imports":{
-             "name":"./src/name.js",
-             "vue" : "https://unpkg.com/vue@3/dist/vue.esm-browser.js"
+             "name":"./src/name.js"
          }
        }
     </script>
@@ -20,11 +19,7 @@
 <body>
     <script type="module">
         import { name } from 'name'
-        import { createApp, version } from 'vue'
         console.log(name)
-        const app = createApp()
-        console.log(app)
-        console.log(version)
     </script>
 
 </body>
