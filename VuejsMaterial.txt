@@ -1683,6 +1683,206 @@ Page
      Address
 
 This layout you have to build using options and composition(setup fun and attribute).
+  ...................................................................................
+............................&&&&&&&&&&..............................................
+			    Component Registeration -Creations
+.....................................................................................
 
-   
+A Vue component needs to be "registered" so that Vue knows where to locate its implmeneation when it is encountered in a template.
 
+
+Two Types of Registeration:
+
+1.Global Registeration
+  Global Components
+2.Local Registeration
+  Local Components
+
+Global Registration and Global Components:
+..........................................
+
+if a component is registered globally, that component is called "Global Components".
+
+
+=>Global components are registered with "application object".
+
+Application object having lot of methods
+
+app.component()
+app.use()
+app.directive()
+app.provide()
+etc...
+
+// register an options object
+app.component('my-component', {
+  /* ... */
+})
+
+// retrieve a registered component
+const MyComponent = app.component('my-component')
+
+
+src/components/StatusBar.vue
+<script setup>
+</script>
+<template>
+    <h1>StatusBar</h1>
+</template>
+
+src/main.js
+// import './assets/main.css'
+
+import { createApp } from 'vue'
+import App from './App.vue'
+import StatusBar from './components/StatusBar.vue'
+//createApp(App).mount('#app')
+const app = createApp(App)
+
+console.log(app)
+
+//Global components
+app.component('StatusBar', StatusBar)
+
+//mount
+app.mount('#app')
+
+How to use Global components Components?
+
+The same syntax, but what ever pattern you use Options api or compositions api with setup fun or attribute.
+
+You can refer global components any where in the application.
+
+You dont need even import also, you can refer directly.
+
+<script setup>
+import Message from './components/Message.vue'
+// import StatusBar from './components/StatusBar.vue'
+</script>
+<template>
+    <Message />
+    <StatusBar></StatusBar>
+</template>
+....................................................................................
+
+			 Local Components Registration
+................................................................................
+
+Components are registered when the child component is created
+
+SFC using composition pattern using setup attribute:
+
+Greeter.vue
+<script setup>
+  import ComponentA from './ComponentA.vue'
+</script>
+
+<template>
+  <ComponentA />
+</template>
+
+SFC using composition pattern using without setup attribute:
+
+Greeter.vue
+<script setup>
+  import ComponentA from './ComponentA.vue'
+
+export default {
+   components: { 
+         ComponentsA
+   }
+}
+</script>
+
+<template>
+  <ComponentA />
+</template>
+
+..................................................................................
+			Both local and global compoents
+...................................................................................
+<script>
+import Hello from './components/greeter/Hello.vue';
+export default {
+    components: { Hello } //Local Component Registration,we tell to the vue engine that when ever you encounter this , create instance for this component.
+}
+</script>
+<template>
+    <StatusBar></StatusBar>
+    <Hello></Hello>
+</template>
+<style>
+</style>
+...................................................................................
+			Global Vs Local Component Registration
+.................................................................................
+
+=>Global registration prevents build systems from removing unused components (a.k.a "tree-shaking").
+=>If you globally register a component but end up not using it anywhere in your app, it will still be included in the final bundle.
+
+=>Global registration makes dependency relationships less explicit in large applications. 
+
+=>It makes it difficult to locate a child component's implementation from a parent component using it.
+
+=>This can affect long-term maintainability similar to using too many global variables.
+
+=>Global Components need to be imported inside any where
+
+<script>
+// import StatusBar from './components/global/StatusBar.vue';
+import Hello from './components/greeter/Hello.vue';
+export default {
+    components: { Hello } //Local Component Registration,we tell to the vue engine that when ever you encounter this , create instance for this component.
+}
+</script>
+<template>
+    <StatusBar></StatusBar>
+    <Hello></Hello>
+</template>
+<style>
+</style>
+....................................................................................
+....................................................................................
+			 Component Naming Conventions
+.....................................................................................
+
+PascalCase names are valid JavaScript identifiers. This makes it easier to import and register components in JavaScript. It also helps IDEs with auto-completion.
+
+<PascalCase /> makes it more obvious that this is a Vue component instead of a native HTML element in templates. It also differentiates Vue components from custom elements (web components).
+
+
+
+This is the recommended style when working with SFC or string templates. However, as discussed in DOM Template Parsing Caveats, PascalCase tags are not usable in DOM templates.
+
+The Component names can be kebab-case /dash case eg
+   <app-root>
+   <hello-world>
+   <greeter>
+Vue supports both cases , but highly recommened is Pascal Case
+
+eg:
+<script>
+//import StatusBar from './components/global/StatusBar.vue';
+import Hello from './components/greeter/Hello.vue';
+export default {
+    //Hello is just Component
+    components: { Hello } //Local Component Registration,we tell to the vue engine that when ever you encounter this , create instance for this component.
+}
+</script>
+<template>
+    <!-- Pascal Case -->
+    <!-- <StatusBar></StatusBar> -->
+    <!-- <Hello></Hello> -->
+    <!-- dash-case/ kebab-case -->
+    <status-bar></status-bar>
+    <hello></hello>
+</template>
+<style>
+</style>
+....................................................................................
+			 Vue dev Tool
+....................................................................................
+This is developer tool installed as part of browser plugin used for understanding component structure and its relationship.
+
+https://devtools.vuejs.org/
+.....................................................................................

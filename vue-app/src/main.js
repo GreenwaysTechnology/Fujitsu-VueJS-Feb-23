@@ -2,5 +2,14 @@
 
 import { createApp } from 'vue'
 import App from './App.vue'
+import StatusBar from './components/StatusBar.vue'
+//createApp(App).mount('#app')
+const app = createApp(App)
 
-createApp(App).mount('#app')
+console.log(app)
+
+//Global components
+app.component('StatusBar', StatusBar)
+
+//mount
+app.mount('#app')
