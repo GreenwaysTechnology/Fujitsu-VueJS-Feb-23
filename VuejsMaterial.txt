@@ -1885,4 +1885,287 @@ export default {
 This is developer tool installed as part of browser plugin used for understanding component structure and its relationship.
 
 https://devtools.vuejs.org/
+
 .....................................................................................
+			    Templates
+...................................................................................
+Template is the representation of View
+View is Runtime representation
+				
+Template can be static or dynamic 
+
+Static templates are having pure html code
+Dynamic templates are having html code + Vue instructions
+Vue instructions are special symbols
+
+Template  = html + vue instructions(data,events,props...)
+
+
+Data Binding:
+    Passing data from the component to "View-UI"  and View to Component
+
+Types of Data bidning:
+
+1.interpolation
+2.property /props binding
+3.attribute binding
+4.event binding
+5.Two way data binding
+6.class and style binding
+.....................................................................................
+.....................................................................................
+			  MVC  Architecture
+....................................................................................
+
+In order to build user interface we have architectures
+
+1.MVC 
+  It is the most legacy arch but still more popular arch, used in server side,client   side app developments
+
+2.Flex 
+   It is discovered by face book, in order to replace MVC , primarily used in React..
+
+Vue js is MVC Based  and Flex mixed arch -hybrid arch..
+
+M - Model - State - Data
+V - View  - User interface
+C - Controller - Having data and biz logic
+
+Vue and MVC:
+
+<script>
+  M + C -> logic
+</script>
+<template>
+   View Logic - Ui
+</template>
+<style>
+
+</style>
+
+compoent = {Model + Controller(Script,View(template,style)}
+....................................................................................
+				Interpolation
+...................................................................................
+
+Transfering state(data) from controller to View.
+
+State:
+  State can be represented in two ways...
+
+1.Primitives
+   numbers,string,booleans
+ let name='Subramaian'
+
+2.Objects and Collections -  literal objects and arrays
+
+  let profile = {
+    id:1,
+    name:'xxx'
+  }
+
+SFC:
+ 1.Using Options api
+ 2.Using Compostion api
+    -with setup fun
+    -with setup attribute
+
+1.Using options api
+
+let options = {
+  components: {},
+  data: function(){},  
+}
+
+State Declarations and Options api:
+...................................
+
+src/compoents/Greeter.vue
+<script>
+export default {
+    //data/state declaration
+    data() {
+        //must return object -state
+        return {
+            name: 'Subramanian'
+        }
+    }
+
+}
+</script>
+<template>
+    <h1>Welcome to </h1>
+</template>
+
+src/App.vue
+<script>
+import Greeter from './components/Greeter.vue'
+export default {
+  components: { Greeter }
+}
+</script>
+<template>
+  <Greeter />
+</template>
+
+We  have declared data inside data function.
+
+How to show or bind the data inside template?
+
+Vue offers the syntax called binding - interpolation - {{variable}}
+
+src/compoents/Greeter.vue
+<script>
+export default {
+    //data/state declaration
+    data() {
+        //must return object -state
+        return {
+            name: 'Subramanian'
+        }
+    }
+
+}
+</script>
+<template>
+    <h1>Welcome to {{ name }} </h1>
+</template>
+.....................................................................................
+			Binding all types of data
+.....................................................................................
+
+
+src/compoents/Profile.vue
+<script>
+export default {
+    data() {
+        return {
+            id: 1,
+            firstName: 'Subramanain',
+            lastName: 'Murugan',
+            points: 100,
+            status: true,
+            address: {
+                city: 'Coimbatore',
+                state: 'Tamil Nadu',
+                country: 'India',
+            }
+        }
+    }
+}
+</script>
+<template>
+    <h1>ID {{ id }}</h1>
+    <h2>Name {{ firstName }} {{ lastName }}</h2>
+    <h3>Points {{ points }}</h3>
+    <h3>Status {{ status ? 'Available' : 'Not Available' }}</h3>
+    <address>
+        <p>{{ address.city }}, {{ address.state }}</p>
+    </address>
+</template>
+<style></style>
+
+src/App.vue
+<script>
+import Profile from './components/Profile.vue';
+export default {
+    components: { Profile }
+}
+</script>
+<template>
+    <Profile />
+</template>
+.....................................................................................
+			Using Compostion api -setup function
+.....................................................................................
+
+The component logic must be encapsulated inside a function called "setup"
+The setup function must return state
+
+export default {
+  setup(){
+     //variables 
+     //state	
+     return {}
+  }
+
+}
+
+src/compoents/Profile.vue
+<script>
+export default {
+    setup() {
+        const id = 1;
+        const firstName = 'Subramanian'
+        const lastName = 'Murugan';
+        const status = true
+        const address = {
+            city: "Coimbatore",
+            state: "Tamil Nadu"
+        }
+        return {
+            id,
+            firstName,
+            lastName,
+            status,
+            address
+        }
+    }
+}
+</script>
+<template>
+    <h1>ID {{ id }}</h1>
+    <h2>Name {{ firstName }} {{ lastName }}</h2>
+    <h3>Points {{ points }}</h3>
+    <h3>Status {{ status ? 'Available' : 'Not Available' }}</h3>
+    <address>
+        <p>{{ address.city }}, {{ address.state }}</p>
+    </address>
+</template>
+<style></style>
+
+src/App.vue
+
+<script>
+import Profile from './components/Profile.vue';
+export default {
+    components: { Profile },
+    setup() {
+
+    }
+}
+</script>
+<template>
+    <Profile />
+</template> 
+
+...................................................................................
+			Compostion api using set up attribute
+.....................................................................................
+
+src/components/Profile.vue
+<script setup>
+const id = 1;
+const firstName = 'Subramanian'
+const lastName = 'Murugan';
+const status = true
+const address = {
+    city: "Coimbatore",
+    state: "Tamil Nadu"
+}
+</script>
+<template>
+    <h1>ID {{ id }}</h1>
+    <h2>Name {{ firstName }} {{ lastName }}</h2>
+    <h3>Points {{ points }}</h3>
+    <h3>Status {{ status ? 'Available' : 'Not Available' }}</h3>
+    <address>
+        <p>{{ address.city }}, {{ address.state }}</p>
+    </address>
+</template>
+<style></style>
+
+
+
+
+
