@@ -1537,3 +1537,152 @@ With setup attribute.
 	      	with setup function                           with setup attribute	
 
 ....................................................................................
+			Component Composition
+.....................................................................................
+
+As we discussed , the html is tree pattern
+
+ <div> -Parent
+    <div> -Child,Parent
+	<div> -Child
+	    <p></p>      ---|
+            <span></span>---| sibilings
+	</div>
+    <div>
+ <div>
+
+Component Structure
+
+ Parent
+   |
+  Child
+     |
+     Child
+.....................................................................................
+ 				 Component Composition
+	                     SFC Pattern Using Options API
+......................................................................................
+
+src/components/Hello.vue
+
+<script>
+export default {
+
+}
+</script>
+<template>
+    <div>
+        <h1>Hello</h1>
+    </div>
+</template>
+
+src/components/Welcome.vue
+
+<script>
+import Hello from './Hello.vue';
+
+export default {
+    components: { Hello }
+}
+</script>
+<template>
+    <div>
+        <!-- <Hello></Hello> -->
+        <Hello/>
+    </div>
+</template>
+
+src/App.vue
+<!-- Component Composition using Options api -->
+<script>
+import Welcome from './components/Welcome.vue';
+export default {
+    //components
+    components: {
+        //Welcome: Welcome
+        Welcome //ES6 object destructuring syntax
+    }
+}
+</script>
+<template>
+    <h1>Component Composition using Options Api</h1>
+    <Welcome></Welcome>
+</template>
+
+.....................................................................................
+ 				 Component Composition
+	                     SFC Pattern Using Composition API
+				   setup function
+.....................................................................................
+src/components/App.vue
+<!-- Component composition using Compostion api -setup function -->
+
+<script>
+import Greeter from './components/Greeter.vue';
+
+export default {
+    components: { Greeter },
+    setup() {
+    },
+}
+</script>
+<template>
+    <Greeter />
+</template>
+
+src/components/Greeter.vue
+<script>
+export default {
+    setup() {
+
+    }
+}
+</script>
+<template>
+    <h1>Greeter</h1>
+</template>
+.....................................................................................
+ 				 Component Composition
+	                     SFC Pattern Using Composition API
+				   setup attribute
+.....................................................................................
+src/App.vue
+<script setup>
+import Message from './components/Message.vue'
+</script>
+<template>
+    <Message />
+</template>
+src/components/Message.vue
+<script setup>
+
+</script>
+<template>
+    <h1>Message</h1>
+</template>
+....................................................................................
+Assigment:
+
+You have to build layout.
+
+Page
+  |
+   Header
+	|
+	Logo
+        SearchPanel
+        LoginPanel
+  |
+  Main
+    -Three sections
+	-Vue features
+  |
+  Footer
+     |
+     CopyRight
+     Address
+
+This layout you have to build using options and composition(setup fun and attribute).
+
+   
+

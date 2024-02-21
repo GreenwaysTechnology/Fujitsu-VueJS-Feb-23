@@ -1,8 +1,7 @@
-<!-- Composition Api Pattern with setup attribute -->
 <script setup>
-// javascript logic 
+import Message from './components/Message.vue'
 </script>
 <template>
-    <h1>Welcome to Vue JS app</h1>
+    <Message />
 </template>
-<style></style>
+
