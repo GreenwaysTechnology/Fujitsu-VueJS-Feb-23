@@ -1537,7 +1537,7 @@ With setup attribute.
 	      	with setup function                           with setup attribute	
 
 ....................................................................................
-			Component Composition
+			    Component Composition
 .....................................................................................
 
 As we discussed , the html is tree pattern
@@ -1685,7 +1685,7 @@ Page
 This layout you have to build using options and composition(setup fun and attribute).
   ...................................................................................
 ............................&&&&&&&&&&..............................................
-			    Component Registeration -Creations
+		 Component Registeration -Creations
 .....................................................................................
 
 A Vue component needs to be "registered" so that Vue knows where to locate its implmeneation when it is encountered in a template.
@@ -1747,7 +1747,7 @@ app.component('StatusBar', StatusBar)
 //mount
 app.mount('#app')
 
-How to use Global components Components?
+How to use Global  Components?
 
 The same syntax, but what ever pattern you use Options api or compositions api with setup fun or attribute.
 
@@ -1943,7 +1943,7 @@ Vue and MVC:
 
 </style>
 
-compoent = {Model + Controller(Script,View(template,style)}
+component = {Model + Controller(Script,View(template,style)}
 ....................................................................................
 				Interpolation
 ...................................................................................
@@ -2164,6 +2164,238 @@ const address = {
     </address>
 </template>
 <style></style>
+....................................................................................
+				Directives
+..................................................................................
+
+What is directive?
+  Directive is object which helps to create custom elements and attributes.
+  Directives enchances existing html elements - We extend the functionality of HTML   elements.
+
+HTML elements Types:
+
+1.Built in element and attributes
+2.Custom elements and attributes
+
+Built in Elements:
+  The elements which are provided by html language.
+<div>
+<h1>
+
+HTML Compiler Work flow:
+.......................
+
+
+<h1>Hello</h1> -----Compiler verfies this element is built in or not
+				|
+		   --------------------------------
+		   |                              |
+                 Yes                             No
+		  |                              |
+Browser parses, the                    Brower throws exception                                                               called "UnknownElement"
+element and convert                    which is converted into plain ascii node
+it , render accordingly
+
+
+<app-drawer> - it is custom element, generally browser does not under stand.
+
+In 2007, W3c introduced new idea that developers can add their own tags/elements(custom elements and custom attributes).
+   HTML 5 Specification
+
+
+built in element logic is already written, so that browser easily understands that.
+
+What about custom element, how to teach browser to understand custom elements?
+    
+  "Through Javascript"
+
+<app-drawer> ---|JS Code--->Runs ---renders in the browser....
+   
+Every Component  element is custom element.
+
+src/components/AppDrawer.vue
+<script setup>
+</script>
+<template>
+    <h1>App Drawer</h1>
+</template>
+
+src/App.vue
+<script setup>
+import AppDrawer from './components/AppDrawer.vue';
+</script>
+<template>
+    <!-- Custom element  -->
+    <app-drawer></app-drawer>
+</template>
+
+Directive is also custom element, component is subclass of Directive.
+.....................................................................................
+			  HTML ATTRIBUTES 
+.....................................................................................
+Types of HTML Attributes
+
+1.InBuilt Attributes
+2.Custom Attributes
+
+InBuilt Attributes:
+
+<img src="" alt="">
+      |      |
+       Attributes - Built in Attributes
+
+Browser knows how to put logic to src and alt.
+
+2.Custom Attributes
+
+ <img abc />
+       |
+    custom attribute
+
+How to teach browser to parse custom attributes?
+    "Through javascript"
+
+How to create custom attributes?
+  Via Directives
+
+You can see already vue is adding custom attributes 
+
+<div id="app" data-v-app>
+
+</div>
+
+Here data-v-app is custom attribute(directive)
+................................................................................
+
+Vue js helps to add custom attributes on existing elements via "directives" - Attribute Directives
+
+Vue js attribute directive syntax:
+
+v-directiveName
+
+Built in Directives:
+...................
+v-text
+v-html
+v-show
+v-if
+v-else
+v-else-if
+v-for
+v-on
+v-bind
+v-model
+v-slot
+v-pre
+v-once
+v-memo
+v-cloak
+
+Special Attributes
+key
+ref
+is
+....................................................................................
+			 V-text and v-html
+.....................................................................................
+
+v-html and v-text is alternate to {{}} for data binding
+
+<!-- Data binding with directives -->
+
+<script setup>
+const firstName = 'Subramanian'
+</script>
+<template>
+    <h1>Interpolation using mustache notation</h1>
+    <p>Name {{ firstName }}</p>
+    <h1>Interpolation using Directives v-text</h1>
+    <p v-text="`Name ${firstName}`"></p>
+    <h1>Interpolation using Directives v-html</h1>
+    <p v-html="`Name ${firstName}`"></p>
+</template>
+
+{{}} and v-text -output would be "Plain Text" -rawText
+v-html -output would be "innerHTML" -rawhtml
+
+....................................................................................
+			 v-bind
+...................................................................................
+
+v-binds binds html attributes values or components values(properties) dynamically.
+
+Binding: Attach value to the attribute
+
+Types of binding
+
+1.Static binding
+ 
+   Binding attribute values once,it cant be changed during runtime.
+
+eg:
+   <img src="logo.png"/>
+         |      |
+  attribute   attribute value
+  The value of "src" cant be changed once ui is rendered
+
+2.Dynamic binding
+ Binding attribute values initalialy, later can be changed during runtime.
+ dynamic binding can be implemented using "v-bind" directive
+
+  <img v-bind:src="variableHoldingImage"/>
+  shortcut:
+  <img :src="variableHoldingImage"/>
+
+
+<script setup>
+const logoUrl = "/src/assets/logo.svg"
+const isEnabled = true
+const isHidden = false
+</script>
+<template>
+    <div>
+        <h1>Bind Directives</h1>
+        <div>
+            <h2>Static Binding</h2>
+            <img src="./assets/logo.svg" height="100" width="100" />
+        </div>
+        <div>
+            <h2>Dynamic Binding with v-bind</h2>
+            <img v-bind:src="logoUrl" height="100" width="100" />
+        </div>
+        <div>
+            <h2>Dynamic Binding with v-bind shortcut</h2>
+            <img :src="logoUrl" height="100" width="100" />
+        </div>
+        <div>
+            <h2>Dynamic Binding with Button Enabled and Disabled state</h2>
+            <button :disabled="isEnabled">Hello</button>
+        </div>
+        <div>
+            <h2>Dynamic Binding with Article Show and Hidden</h2>
+            <article :hidden="isHidden">
+                <p>This is article</p>
+            </article>
+        </div>
+    </div>
+</template>
+.....................................................................................
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
