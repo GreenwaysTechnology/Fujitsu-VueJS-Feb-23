@@ -2799,5 +2799,131 @@ Assigment:
 <CustomerDetails id="2"/>
 <CustomerDetails id="3"/>
 
+	....................................................................................
+			   Event Handling
+....................................................................................
+Event handling is one of the most popular concept in javascript as part of DOM programming.
+Event handling helps to interact with user.
+Events  are signals triggered by user or system, send to os system, the software or hardware reacts according to the event.
+
+Events are classified into two category
+
+1.Hardware events
+   Triggered by user or system, interacts with hardware devices   
+eg:
+  Mouse events
+    onclick,ondblclick,onmouseenter...
+  https://www.w3schools.com/jsref/obj_mouseevent.asp
+  Keyboard events
+   onkeypress,onkeydown
+  https://www.w3schools.com/jsref/event_onkeypress.asp
+  Touch events
+  ontouchstart,ontouchend
+  https://www.w3schools.com/jsref/obj_touchevent.asp
+
+2.Application events
+   attached with objects called dom objects
+   onload,oncomplete
+
+...................................................................................
+				        How event handling works
+
+Event handling has been designed based on the design pattern called "pub-sub"/observer design pattern.
+
+There are two actors:
+1.Producer
+   The producer is something who sends signals(events - name of the event and data assoicated) to the listener
+2.Listener
+  The Listener is someone who waits/listens for event.
+  Once the event is given who reacts/respond
+
+In js :
+ Listener is function.
+
+//event is just reference to the Event Object having information about event, and data
+function listener(event){
+     event.target.value
+}
+event object is a bridge between producer and listener
+
+In javascript , events are given by language itself.
+
+events are started with "on+eventName" - 
+ onclick="listener"
+
+addEventListener('click',listener)
+  listeners are plain js functions with event object reference arg
+
+Frameworks like vue,react,angular who adds their own abstractions.
+
+We can attach event on any dom element which could be application or hardware
+
+Vue Js and event handling:
+..........................
+
+Vue attaches events with any element with help of directive
+                          "v-on"
+
+Syntax:
+1. v-on:NameOftheEvent="listener" -  v-on:click="update"
+2. @click="listener" - @click="update"
+
+Event Handling In Options API:
+...............................
+src/App.vue
+<script>
+export default {
+
+  methods: {
+    //listeners
+    onIncrement(evt) {
+      console.log('button is clicked')
+    }
+  }
+}
+</script>
+<template>
+  <h1>Event Handling</h1>
+  <button v-on:click="onIncrement">Increment</button>
+  <button @click="onIncrement">Increment</button>
+</template>
+
+Event Handling In Composition-Setup Function:
+<script>
+export default {
+    setup() {
+        //listener
+        // function onIncrement(evt) {
+        //     console.log('increment')
+        // }
+        //es 6 arrow functions
+        const onIncrement = () => {
+            console.log('increment')
+        }
+        //function must be returned
+        return {
+            onIncrement
+        }
+    }
+}
+</script>
+<template>
+    <h1>Event Handling</h1>
+    <button @click="onIncrement">Increment</button>
+</template>
+
+
+Event Handling In Composition-Setup Attribute:
+
+<script setup>
+const onIncrement = () => {
+    console.log('increment')
+}
+</script>
+<template>
+    <h1>Event Handling</h1>
+    <button @click="onIncrement">Increment</button>
+</template>
+
 
 
