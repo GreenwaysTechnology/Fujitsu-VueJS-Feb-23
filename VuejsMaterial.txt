@@ -2380,24 +2380,424 @@ const isHidden = false
     </div>
 </template>
 .....................................................................................
+			  Props - Property Binding
+.....................................................................................
+
+Component Driven Design principles:
+
+Role of Components / Responsibility of Component:
+..................................................
+
+Component having state,bizlogic,ui
+
+As per component design design principles , we need to apply modularity concept.
+  Break the component based on two aspects
+
+1.Having data and biz logic
+    -Parent Component /Container component
+2.Having UI logic
+    -Child Component/Presentational Component
+
+Data(State) Sharing Patterns/ Data(State) Representation Patterns:
+....................................................
+
+1.Props Pattern
+  The data is shared from the Parent Component to Child Component.
+2.State Pattern
+   The data is represented within in component and change it.
+
+Syntax:
+ From Parent Component Template
+
+  <Child title="Hello" />
+          |        |  
+Property Name   Property Value
+
+How to structure a Large scale vue.js app
+
+Default strcture
+
+src
+  |
+  components
+    |
+    User 
+    Product
+    Comments
+    Payment
+ |
+ App.vue
+ main.js
+
+Standard Structure of apps would be domain model
+
+src
+  |
+  components
+    |
+    User 
+      Userlist.vue
+      UserDetails.vue
+      User.vue
+   Product	
+      ProductList.vue
+      ProductDetails.vue
+      Product.vue
+   stores
+   layouts
+   plugins
+   directives
+   helpers/utils
+...................................................................................
+			  Props/Property -Pattern Implementation
+...................................................................................
+
+How to pass data from the parent component to child component?
+
+We have many api styles (options and composition api(setup fun/setup attribute)
+
+Props with Options Api.
+.......................
+
+Static Binding: 
+  Props value once supplied cant be passed value dynamically.
+
+src/components/products/ProductMaster.vue
+<script>
+import ProductDetails from './ProductDetails.vue'
+export default {
+    components: { ProductDetails }
+}
+</script>
+<template>
+    <h1>Product Master</h1>
+    <!-- sending data from Productmaster to ProductDetails -->
+    <ProductDetails title="Product Details Page"></ProductDetails>
+</template>
 
 
+src/components/products/ProductDetails.vue
+<script>
+export default {
+    props: ['title']
+}
+</script>
+<template>
+    <h1>{{ title }}</h1>
+</template>
+
+src/App.vue
+<script setup>
+import ProductMaster from './components/products/ProductMaster.vue'
+
+</script>
+<template>
+  <h1>App</h1>
+  <ProductMaster></ProductMaster>
+</template>
+.....................................................................................
+
+How to pass object as prop? Dynamic values?
+  Using v-bind:prop or :prop 
+
+src/components/products/ProductMaster.vue
+
+<script>
+import ProductDetails from './ProductDetails.vue'
+export default {
+    components: { ProductDetails },
+    data() {
+        return {
+            product: {
+                id: 1,
+                name: 'IPHONE',
+                model: '15 Max Pro',
+                qty: 10,
+                price: 124000,
+                inStock: true
+            }
+        }
+    }
+}
+</script>
+<template>
+    <h1>Product Master</h1>
+    <!-- sending data from Productmaster to ProductDetails -->
+    <!-- <ProductDetails title="Product Details Page" v-bind:product="product"></ProductDetails> -->
+    <ProductDetails title="Product Details Page" :product="product"></ProductDetails>
+</template>
 
 
+src/components/products/ProductDetails.vue
+<script>
+export default {
+    props: ['title', 'product']
+}
+</script>
+<template>
+    <h1>{{ title }}</h1>
+    <div>
+        <h1>Id {{ product.id }}</h1>
+        <h2>Name {{ product.name }}</h2>
+        <h2>Model {{ product.model }}</h2>
+        <h2>Price {{ product.price }}</h2>
+        <h2>Qty {{ product.qty }}</h2>
+        <h2>Stock {{ product.inStock ? 'Available' : 'Out of Stock' }}</h2>
+
+    </div>
+</template>
+...................................................................................
+			 Props Composition Api - Setup function
+....................................................................................
+
+src/components/products/ProductMaster.vue
+<script>
+import ProductDetails from './ProductDetails.vue'
+export default {
+    components: { ProductDetails },
+    setup() {
+        return {
+            product: {
+                id: 1,
+                name: 'IPHONE',
+                model: '15 Max Pro',
+                qty: 10,
+                price: 124000,
+                inStock: true
+            }
+        }
+    }
+}
+</script>
+<template>
+    <h1>Product Master</h1>
+    <ProductDetails title="Product Details Page" :product="product"></ProductDetails>
+</template>
 
 
+src/components/products/ProductDetails.vue
+<script>
+export default {
+    props: ['title', 'product'],
+    setup() {
+
+    }
+}
+</script>
+<template>
+    <h1>{{ title }}</h1>
+    <div>
+        <h1>Id {{ product.id }}</h1>
+        <h2>Name {{ product.name }}</h2>
+        <h2>Model {{ product.model }}</h2>
+        <h2>Price {{ product.price }}</h2>
+        <h2>Qty {{ product.qty }}</h2>
+        <h2>Stock {{ product.inStock ? 'Available' : 'Out of Stock' }}</h2>
+
+    </div>
+</template>
+...................................................................................
+			 Props Composition Api - Setup function
+....................................................................................
+
+src/components/products/ProductMaster.vue
+<script setup>
+import ProductDetails from './ProductDetails.vue'
+const product = {
+    id: 1,
+    name: 'IPHONE',
+    model: '15 Max Pro',
+    qty: 10,
+    price: 124000,
+    inStock: true
+}
+</script>
+<template>
+    <h1>Product Master</h1>
+    <ProductDetails title="Product Details Page" :product="product"></ProductDetails>
+</template>
+
+Reading props in setup attribute:
+.................................
+In vue 3 , we have function called "defineProps" which is global function, can be used to read props.
+
+src/components/products/ProductDetails.vue
+<script setup>
+const props = defineProps(['title', 'product'])
+</script>
+<template>
+    <h1>{{ props.title }}</h1>
+    <div>
+        <h1>Id {{ props.product.id }}</h1>
+        <h2>Name {{ props.product.name }}</h2>
+        <h2>Model {{ props.product.model }}</h2>
+        <h2>Price {{ props.product.price }}</h2>
+        <h2>Qty {{ props.product.qty }}</h2>
+        <h2>Stock {{ props.product.inStock ? 'Available' : 'Out of Stock' }}</h2>
+
+    </div>
+</template>
+..................................................................................
+		What if , if you want to access props inside setup function
+
+setup function takes "props" as arg through which you can access all properties supplied by parent component.
+
+<script>
+export default {
+    props: ['title', 'product'],
+    setup(props) {
+        //how to access props inside setup function
+        //console.log(this.props.title)
+        console.log(props.title)
+
+    }
+}
+</script>
+<template>
+    <h1>{{ title }}</h1>
+    <div>
+        <h1>Id {{ product.id }}</h1>
+        <h2>Name {{ product.name }}</h2>
+        <h2>Model {{ product.model }}</h2>
+        <h2>Price {{ product.price }}</h2>
+        <h2>Qty {{ product.qty }}</h2>
+        <h2>Stock {{ product.inStock ? 'Available' : 'Out of Stock' }}</h2>
+
+    </div>
+</template>
+....................................................................................
+			 Property Validation
+....................................................................................
+
+Some times i want to enforce the property data type validation, which is only for runtime vertification.
+
+eg:
+ i have property called age
+ i need to define rule for age that age must be number,it should not be string.
+
+defineProps Syntax:
+
+1.simple Syntax
+defineProps(['propName','propName'])
+
+2.Complex Syntax : prop validation rule, default value 
+  
+defineProps({
+     age:Number,  
+     id: [Number,String] // can be string or can be number
+     name: {
+      type:String
+      required:true,
+      default:'name'
+     },
+    status: {
+	validator(value){
+	  return ['OK','NotOk','Success','Failure'].includes(value)
+       }
+    }
+ })
+Runtime Types:
+1.String
+2.Number
+3.Boolean
+4.Array
+5.Object
+6.Date
+7.Function
+8.Symbol
+
+src/components/User.vue
+<script setup>
+const props = defineProps({
+    name: {
+        type: String,
+        default: 'Name is Missing'
+    },
+    id: {
+        type: [Number, String],
+        default: 0
+    },
+    status: {
+        type: Boolean,
+        default: false
+    }
+})
+</script>
+<template>
+    <h1>Property validation</h1>
+    <div>
+        <h1>{{ props.id }}</h1>
+        <h3>{{ props.name }}</h3>
+        <h4>{{ props.status ? 'Available' : 'Not Available' }}</h4>
+    </div>
+</template>
+
+src/App.vue
+<script setup>
+import User from './components/User.vue';
+// const id = false
+const id = 1
+const name = 'Subramanian'
+const status = true
+</script>
+<template>
+    <h1>Property validation</h1>
+    <User />
+    <User :id="id" :name="name" :status="status" />
+</template>
+....................................................................................
+		Can we modify the props value in Child Component
+...................................................................................
+
+As per component driven design rule, props cant be or should not be modifed by child component- Props are read only.
 
 
+<script setup>
+const props = defineProps({
+    name: {
+        type: String,
+        default: 'Name is Missing'
+    },
+    id: {
+        type: [Number, String],
+        default: 0
+    },
+    status: {
+        type: Boolean,
+        default: false
+    }
+})
+props.name = 'foo'
+</script>
+<template>
+    <h1>Property validation</h1>
+    <div>
+        <h1>{{ props.id }}</h1>
+        <h3>{{ props.name }}</h3>
+        <h4>{{ props.status ? 'Available' : 'Not Available' }}</h4>
+    </div>
+</template>
 
+Output:
+Vue warn] Set operation on key "name" failed: target is readonly. Proxy(Object)
+warn @ vue.js?v=2eb3f6c7:288
+Show 1 more frame
+Show less
+vue.js?v=2eb3f6c7:288 [Vue warn] Set operation on key "name" failed: target is readonly. Proxy(Object)
+....................................................................................
 
+Assigment:
 
+ You have to Create Customer Details
 
+    -CustomerMaster
+    -CustomerDetails
 
+ I have to display different type of customers , you can change customer values dynamically... You can use hard-coded values
 
-
-
-
-
+<CustomerDetails id="1"/>
+<CustomerDetails id="2"/>
+<CustomerDetails id="3"/>
 
 
 
