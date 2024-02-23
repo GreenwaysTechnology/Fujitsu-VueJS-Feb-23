@@ -2597,7 +2597,7 @@ export default {
     </div>
 </template>
 ...................................................................................
-			 Props Composition Api - Setup function
+			 Props Composition Api - Setup attribute
 ....................................................................................
 
 src/components/products/ProductMaster.vue
@@ -2924,6 +2924,495 @@ const onIncrement = () => {
     <h1>Event Handling</h1>
     <button @click="onIncrement">Increment</button>
 </template>
+.....................................................................................
+ 	How to attach more than one listener on single DOM Element
+.....................................................................................
+
+<dom v-on:eventName="listener" v-on:eventName="listener">
+<dom v-on="{mouseenter:listener,mouseleave:listener}">
 
 
+<script setup>
+const onMouseLeave = () => {
+    console.log('leave')
+}
+const onMouseEnter = () => {
+    console.log('enter')
+}
 
+</script>
+<template>
+    <h1>Event Handling</h1>
+    <div v-on="{ mouseenter: onMouseEnter, mouseleave: onMouseLeave }">
+        Touch
+    </div>
+</template>
+.....................................................................................
+		 How to pass data to the event listener
+....................................................................................
+
+syntax:
+ 
+const getData=(data,event)=>{
+
+}
+<button @click="getData('hello',$event)">Pass data</button>
+
+When we pass data to the listener, vue cant pass event implicitly, we have to pass event object explicitly via "$event" which is gloabl event object provided by vue.
+
+
+src/App.vue
+<script setup>
+const onData = (data, event) => {
+    console.log(data, event)
+}
+
+</script>
+<template>
+    <h1>Event Handling</h1>
+    <button @click="onData('hello', $event)">PassData</button>
+</template>
+.....................................................................................
+			 State -Reactive State
+.....................................................................................
+
+State means data.
+
+How to change or update or mutate State?
+
+"React js uses the concept called "pure functions" to change the state.
+"Angular uses the concept called "Two way data" binding to change the state.
+"Vue uses the concept called "Reactive State"/ "Reactivity" to change the state.
+
+
+Component state contains reactie js object, when we modify them, the view updates automatically.
+
+Through event listener, we modify the state of the object(reactive),UI gets latest value.
+
+State update is different from options api and composition api.
+
+
+Options Api:
+ "data" function returns object which is by default "reactive", when ever you change that properties of the object, UI bindings gets updated automatically.
+
+data(){
+ //reactive state
+  return {
+     count:0
+   }
+}
+methods: {
+  onIncrement(){
+    //mutate the reactive variable
+    this.count++
+  }
+
+}
+...................................................................................
+src/App.vue
+<script>
+export default {
+    data() {
+        return {
+            counter: 0
+        }
+    },
+    methods: {
+        onIncrement() {
+            //mutate the state
+            this.counter++
+        }
+    }
+}
+</script>
+<template>
+    <div>
+        <h1>Counter {{ counter }}</h1>
+        <button @click="onIncrement">+</button>
+    </div>
+</template>
+
+How the above code works?
+.....................................................................................
+				Rendering Mechanism
+
+How does vue take a template and turn into actual DOM nodes?How does vue update those DOM nodes efficiently?
+
+Virtual DOM:
+
+ Virtual DOM is inspired from react.js,Vue js internally uses this concept to render ui.
+
+Virtual DOM or VDOM is programming concept when an ideal or "virtual" representation of UI is kept in memory and synced with the "real" DOM.
+
+Render Pipeline:
+................
+
+At high level, this is what happens when a vue component is mounted...
+
+1.Compile:
+    Vue templates are compiled into render functions..that functions that return     virutal dom tree.
+    This step can be done either aot via build step, or on fly by using the runtime     compiler
+
+2.Mount:
+  The runtime renderer invokes the render function, walks the returned virtual DOM   tree,and creates actual DOM nodes based on it.
+
+3.Path:
+   when a dependency used  during mount changes, the effect re-runs,This time , a new   ,updated virtual dom tree is created, the runtime renderer walks the new tree,       compares it with old one and applies necessary updates to the actual DOM
+
+
+			     Compoent Reactive State
+			    trigger re render process
+					|
+Template---compiledInto----render function code----returns--VDOM tree--mount/patch-->Actual DOM
+
+.....................................................................................
+			Component state using Compostion setup function
+.....................................................................................
+
+<script>
+export default {
+    setup() {
+        let counter = 0
+        const onIncrement = () => {
+            console.log(counter)
+            counter++
+        }
+        return {
+            counter,
+            onIncrement
+        }
+    }
+}
+</script>
+<template>
+    <div>
+        <h1>Counter {{ counter }}</h1>
+        <button @click="onIncrement">+</button>
+    </div>
+</template>
+
+After running this code,
+    Here we are trying to mutate/update the "count" state variable, there is update happening but it does not trigger "view update/view renderer"
+
+ The reason because the variables are declared within setup function is not "reactive" variables by default which is local variable, so that vue engine will not tigge re render..
+
+We have to convert that local variable into "Reactive variable"
+.....................................................................................
+....................................................................................
+			   Reactivity
+....................................................................................
+
+What is Reactivity?
+  Reactivity is one of the core vue js concept.
+Component state are "reactive javascript objects"
+
+The word reactivity means "changing" the state(object),whenever changes happen it publishes some events, based on events,reactions happens.
+
+Programming work flow in general
+
+int x =10;
+int y =20;
+
+int result = x + y
+
+
+when you compute this code, the runtime will execute instructions top-down pattern.
+if there is change in variable (like x or y), will not update result variable
+ -Sequential programming model.
+
+What if i want to update the "result" variable value automatically when ever x or y changes.
+
+eg:
+Excel spreed sheet is one of the best eg for reactivitity programming
+
+eg;
+
+let A1=1
+let A2=2
+let A3 =A1+A2
+console.log(A3) => 3
+
+A2=4
+console.log(A3) => 5
+
+Here when you mutate A1 or A2, does not change automatically.
+
+We can wrap this code inside function
+
+ let A3
+ function update(){
+   A3 = A1 + A2
+ }
+
+in order get fresh value, we have to re-run the code that updates A3
+
+Pointers:
+
+1.There should be some update function, which produces a "side effect /effect".
+  if any function which changes the state of the program called side effect.
+
+2.Here ,A1 and A2 are considered dependencies of the side effect, because which helps makes side effects.
+  According to dependencies, this effect is said to be "subscriber"
+
+When ever "A1 and A2" changed, we need to invoke "update" function,which cause side effects.
+
+It looks like event driven programming (Pub-Sub Pattern /Observerable and Observer) 
+
+ function whenDepChange(update){
+     update()
+ }
+
+ let A3
+ function update(){
+   A3 = A1 + A2
+ }
+
+ whenDepChange(function(){
+     A3 = A1 + A2
+ })
+ whenDepChange(update)
+
+Role of whenDepchange function:
+................................
+
+1.Tracking the dependencies,
+    By evaulating the expression A1 and A2 ,Whether any one of them is read or not.
+
+Vue Internal Reactivity WorkFlow:
+
+Tracker--->triggers--whenDepChange--->runs update function---returns modified state
+	
+...................................................................................
+
+...................................................................................
+			  Vue js and Reactivity
+
+Vue js uses "Reactivity subsystem" in order to track all state variables, when ever whatever changes happen, it informs the vue engine for re render process..
+
+
+In Options Api pattern,
+
+export default {
+  
+  data(){
+   let count =0
+    return {
+      count:count
+    }
+  }
+
+}
+inside data function , if you return object, by default it is reactive, meaning that any changes detected, it starts re render ui.
+In Compostion api pattern: whether is setup fun or setup attribute
+
+<script>
+export default {
+ 
+   setup() {
+    let count =0;
+	return {
+	  count:count
+       }
+   }  
+
+}
+</script>
+by default setup function /setup attribute does not return reactive state..(it is normal object)
+
+In options api every property we return is reactive, but in compostion api we can restrict reactive and non reactive.
+
+How to declare reactive state/ how to attach reactivity feature?
+
+Compostion Api reactive methods:
+................................
+ref()
+computed()
+reactive()
+readonly()
+watchEffect()
+watchPostEffect()
+watchSyncEffect()
+watch()
+
+ref():
+ It is function which returns Object, not value
+
+function ref<T>(value: T): Ref<UnwrapRef<T>>
+
+interface Ref<T> {
+  value: T
+}
+..................................................................................
+			 ref implementation -setup function
+...................................................................................
+<script>
+import { ref } from 'vue'
+export default {
+    setup() {
+        let counter = ref(0)
+        const onIncrement = () => {
+            counter.value++
+            console.log(counter)
+
+        }
+        return {
+            counter,
+            onIncrement
+        }
+    }
+}
+</script>
+<template>
+    <div>
+        <h1>Counter {{ counter }}</h1>
+        <button @click="onIncrement">+</button>
+    </div>
+</template>
+..................................................................................
+			 ref implementation - setup  attribute
+...................................................................................
+
+<script setup>
+import { ref } from 'vue'
+let counter = ref(0)
+const onIncrement = () => {
+    counter.value++
+    console.log(counter)
+}
+</script>
+<template>
+    <div>
+        <h1>Counter {{ counter }}</h1>
+        <button @click="onIncrement">+</button>
+    </div>
+</template>
+.....................................................................................
+			inline listeners
+.....................................................................................
+<script setup>
+import { ref } from 'vue'
+let counter = ref(0)
+</script>
+<template>
+    <div>
+        <h1>Counter {{ counter }}</h1>
+        <button @click="counter++">+</button>
+    </div>
+</template>
+.....................................................................................
+	Passing Values to Listener and based on that value we can mutate UI
+.....................................................................................
+<script setup>
+import { ref } from 'vue'
+let counter = ref(0)
+const onIncrement = (payload, event) => {
+    counter.value += payload
+}
+</script>
+<template>
+    <div>
+        <h1>Counter {{ counter }}</h1>
+        <button @click="onIncrement(5, $event)">+</button>
+    </div>
+</template>
+.....................................................................................
+		Multiple ref variables
+....................................................................................
+<script setup>
+import { ref } from 'vue'
+let like = ref(0)
+let dislike = ref(0)
+</script>
+<template>
+    <div>
+        <h1>Like {{ like }} Dislike {{ dislike }}</h1>
+        <button @click="like++">Like</button>
+        <button @click="dislike++">Dislike</button>
+    </div>
+</template>
+.....................................................................................
+		 ref with literal object
+.....................................................................................
+<script setup>
+import { ref } from 'vue'
+let review = ref({ like: 0, dislike: 0 })
+const onLike = () => {
+    review.value.like++
+}
+const onDislike = () => {
+    review.value.dislike++
+
+}
+</script>
+<template>
+    <div>
+        <h1>Like {{ review.like }} Dislike {{ review.dislike }}</h1>
+        <button @click="onLike">Like</button>
+        <button @click="onDislike">Dislike</button>
+    </div>
+</template>
+.....................................................................................
+			 reactive api
+....................................................................................
+There is another way to declare reactive state, with reactive api.
+Unlike ref which wraps the inner value in special object, reactive means an object itself reactive.
+
+<script setup>
+import { reactive } from 'vue'
+let review = reactive({ like: 0, dislike: 0 })
+const onLike = () => {
+    review.like++
+}
+const onDislike = () => {
+    review.dislike++
+
+}
+</script>
+<template>
+    <div>
+        <h1>Like {{ review.like }} Dislike {{ review.dislike }}</h1>
+        <button @click="onLike">Like</button>
+        <button @click="onDislike">Dislike</button>
+    </div>
+</template>
+
+ref vs reactive:
+1.reactive api takes objects as parameter like literal object,collection type, such as array,map,set.It cant hold primitives such as string,number,boolean.
+2.ref can take any type of data
+=>reactive conversion (changes) are even updated for deep nested objects
+=>reactive api compares every property in the object before ui re renders for changes.
+
+
+let obj={
+ 
+  a:1
+  b: {
+    c: {
+     d: {
+	    e:0
+     }
+    }
+  }
+}
+...................................................................................
+			 Nested Object and Reactive State
+..................................................................................
+<script setup>
+import { reactive } from 'vue'
+let comments = reactive({
+    like: 0, dislike: 0, recommend: {
+        rating: {
+            value: 0
+        }
+    }
+})
+</script>
+<template>
+    <div>
+        <h1>Like {{ comments.like }} Dislike {{ comments.dislike }} Rating {{ comments.recommend.rating.value }}</h1>
+        <button @click="comments.like++">Like</button>
+        <button @click="comments.dislike++">Dislike</button>
+        <button @click="comments.recommend.rating.value++">Rating</button>
+
+    </div>
+</template>
