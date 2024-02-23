@@ -1,19 +1,69 @@
 <script setup>
 import { reactive } from 'vue'
-let comments = reactive({
-    like: 0, dislike: 0, recommend: {
-        rating: {
-            value: 0
-        }
+
+const persons = [
+    {
+        id: 1,
+        name: 'A',
+        friends: [
+            {
+                name: 'F1'
+            },
+            {
+                name: 'F2'
+            },
+            {
+                name: 'F3'
+            }
+        ]
+    },
+    {
+        id: 2,
+        name: 'B',
+        friends: [
+            {
+                name: 'BF1'
+            },
+            {
+                name: 'BF2'
+            },
+            {
+                name: 'BF3'
+            }
+        ]
+    },
+    {
+        id: 3,
+        name: 'C',
+        friends: [
+            {
+                name: 'CF1'
+            },
+            {
+                name: 'CF2'
+            },
+            {
+                name: 'CF3'
+            }
+        ]
     }
-})
+]
+
+const list = reactive(persons)
+
 </script>
 <template>
     <div>
-        <h1>Like {{ comments.like }} Dislike {{ comments.dislike }} Rating {{ comments.recommend.rating.value }}</h1>
-        <button @click="comments.like++">Like</button>
-        <button @click="comments.dislike++">Dislike</button>
-        <button @click="comments.recommend.rating.value++">Rating</button>
+        <ul>
+            <li v-for="person in list">
+                <span>{{ person.name }}</span>
+                <ul>
+                    <li v-for="friend of person.friends">
+                        <span>{{ friend.name }}</span>
+                    </li>
+                </ul>
+            </li>
+        </ul>
 
     </div>
 </template>
