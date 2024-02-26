@@ -3688,3 +3688,346 @@ Render collection
 When i click the item, we need to show the details 
 https://fakestoreapi.com/users
 .....................................................................................
+			  Watchers
+....................................................................................
+
+What is watcher?
+  Watcher is a function which allows us to monitor an application state and trigger actions based on those changes.
+  Watchers that allow us to observe some data and perform sepcific actions when it changes.
+  It is more generic way to observe and react to data changes in the vue instance.
+
+With watchers, we are not just able to watch a property and peform custom actions, we can alos access the old value that is particular property is changining from, as well as the new value that it has changed to.
+ 
+Watchers in options api:
+<script>
+export default {
+  data() {
+    return {
+      counter: 0
+    }
+  },
+  watch: {
+    counter(newvalue, oldvalue) {
+      console.log(`new Value ${newvalue} oldValue ${oldvalue}`)
+    }
+  }
+}
+</script>
+<template>
+  <h1>Counter {{ counter }}</h1>
+  <button @click="counter++">+</button>
+</template>
+
+<script>
+import { ref, watch } from 'vue';
+
+export default {
+    setup() {
+        const counter = ref(0)
+
+        //watchers
+        watch(counter, (newValue, oldValue) => {
+            console.log(`New Value ${newValue} Old Value ${oldValue}`)
+        })
+        return {
+            counter
+        }
+    }
+}
+</script>
+<template>
+    <h1>Counter {{ counter }}</h1>
+    <button @click="counter++">+</button>
+</template>
+
+Watchers in setup attribute:
+<script setup>
+import { ref, watch } from 'vue';
+const counter = ref(0)
+//watchers
+watch(counter, (newValue, oldValue) => {
+    console.log(`New Value ${newValue} Old Value ${oldValue}`)
+})
+</script>
+<template>
+    <h1>Counter {{ counter }}</h1>
+    <button @click="counter++">+</button>
+</template>
+.....................................................................................
+			 Object Properties and watchers
+....................................................................................
+<script setup>
+import { reactive, watch } from 'vue';
+const comments = reactive({ like: 0, dislike: 0, recommend: { rating: { value: 0 } } })
+//watchers
+watch(comments, (newValue, oldValue) => {
+    //console.log(`New Value ${newValue} Old Value ${oldValue}`)
+    console.log(newValue)
+})
+</script>
+<template>
+    <h1>Comments {{ comments.like }}</h1>
+    <button @click="comments.like++">+</button>
+</template>
+...................................................................................
+			...................................................................................
+			watch is simplified with "watchEffect" api
+...............................................................................
+<script setup>
+import { ref, watchEffect } from 'vue';
+const counter = ref(0)
+//watchers
+watchEffect(() => {
+    console.log(counter.value)
+})
+</script>
+<template>
+    <h1>Counter {{ counter }}</h1>
+    <button @click="counter++">+</button>
+</template>
+....................................................................................
+		   Watchers in real time
+....................................................................................
+Real time convesion
+Real time data fetch...
+
+I give data in celsius,but i need to convert into farenheit...
+
+<script setup>
+import { ref, watch, watchEffect } from 'vue';
+
+const tmpCelsius = ref(0)
+const tempFarenheit = ref(0)
+//watchers to compute farenheit
+watch(tmpCelsius, (newValue) => {
+    tempFarenheit.value = Math.round((newValue * 9) / 5 + 32)
+})
+</script>
+<template>
+    <h1>TtmpCelsius{{ tmpCelsius }}</h1>
+
+    <h1>Temperature In Farenheit {{ tempFarenheit }}</h1>
+    <button @click="tmpCelsius += 3">+</button>
+</template>
+...................................................................................
+.....................................................................................
+			 Computed Properties
+.....................................................................................
+In Vue js , there are serveral ways to set static or dynamic values to display on the template.
+
+These inlcude using text interpolation, directly hardcoding into your HTML or even using simple expressions to modify the data.
+
+What  are computed properties?
+
+ In vue js, computed properties enable you to create a property that can be used to modify,manuipulate, and display data within your components in a readable and efficient manner.
+
+You can use computed properties to calculate and display values based on a value or set of values in the data model.
+
+It can also have some custom logic that is cached based on its dependencies, even though page reloads, it does not change..
+
+computed properties in options api:
+...................................
+
+<script>
+export default {
+    data() {
+        return {
+            productNo: 2
+        }
+    },
+    computed: {
+        product() {
+            return `Your Product No is ${this.productNo}`
+        }
+    }
+}
+</script>
+<template>
+    <!-- <h1>{{ 'Your Product No ' + productNo }}</h1> -->
+    <h1>{{ product }}</h1>
+</template>
+
+Use cases of computed properties:
+..................................
+Computed properties are used to solve more complex template expression problems.
+
+1.Filtering data
+ computed properties are great for filtering data.
+
+for eg: lets say you are filtering an array from input search bar.
+
+<!-- Data filter with computed properties -->
+<script>
+import TODOS from './mock-data/todos'
+export default {
+    data() {
+        return {
+            todos: TODOS,
+            searchQuery: null
+        }
+    },
+    computed: {
+        resultQuery() {
+            //search logic
+            if (this.searchQuery) {
+                return this.todos.filter(item => {
+                    return this.searchQuery.toLowerCase().split(" ").every(v => item.title.toLowerCase().includes(v))
+                })
+
+            } else {
+                return this.todos
+            }
+        }
+    }
+}
+</script>
+<template>
+    <div>
+        <input v-model="searchQuery" type="text">
+        <div v-for="todo in resultQuery" :key="todo.id">
+            <p>{{ todo.id }} {{ todo.title }}</p>
+        </div>
+    </div>
+</template>
+...................................................................................
+Dynamic Calculation:
+...................
+<script>
+export default {
+    data() {
+        return {
+            number: 2
+        }
+    },
+    computed: {
+        doubleIt() {
+            return this.number * 2
+        }
+    }
+}
+</script>
+<template>
+    <div>
+        {{ doubleIt }}
+    </div>
+</template>
+.....................................................................................
+Dynamic Toggling:
+.................
+<script>
+export default {
+    data() {
+        return {
+            status: true
+        }
+    },
+    computed: {
+        toggle() {
+            if (this.status) {
+                return true
+            } else {
+                return false
+            }
+
+        }
+
+    }
+}
+</script>
+<template>
+    <button @click="status = !status">{{ status }}</button>
+</template>
+...................................................................................
+			Computed Properties and Composition Api
+...................................................................................
+
+Setup and set up attribute syntax remains 
+
+
+setup fun:
+<script>
+import { computed, ref } from 'vue';
+
+export default {
+    setup() {
+        const product = ref(2)
+
+        const productNo = computed(() => {
+            return product.value
+        })
+        return {
+            productNo
+        }
+    }
+}
+</script>
+<template>
+    <h1>{{ productNo }}</h1>
+</template>
+
+Search and Computed Properties:
+<script setup>
+import { computed, reactive } from 'vue'
+import  TODOS  from './mock-data/todos'
+
+const state = reactive({ todos: TODOS, searchQuery: null })
+
+const resultQuery = computed(() => {
+    if (state.searchQuery) {
+        //filter logic 
+        return state.todos.filter(item => {
+            console.log(item)
+            return state.searchQuery.toLowerCase().split(" ").every(v => item.title.toLowerCase().includes(v))
+        });
+    } else {
+        return state.todos
+    }
+});
+</script>
+<template>
+    <input v-model="state.searchQuery" type="text">
+    <div v-for="todo in resultQuery" :key="todo.id">
+        <p>{{ todo.id }} {{ todo.title }}</p>
+    </div>
+</template>
+....................................................................................
+...................................................................................
+			Caching and computed Properties
+		   (Normal methods vs Computed Properties)
+We can write same logic using normal methods, but normal methods are not cached
+
+<script setup>
+import { computed, reactive } from 'vue'
+
+const author = reactive({
+    name: 'Subramanian',
+    trainings: [
+        'vue',
+        'react',
+        'java'
+    ]
+})
+//computed Properties:
+const TotalTrainings = computed(() => {
+    console.log('computed  method')
+    return author.trainings.length > 0 ? "Yes" : "No"
+})
+
+//computed properties
+const TotalTrainingsNormal = () => {
+    console.log('TotalTrainingsNormal  method')
+    return author.trainings.length > 0 ? "Yes" : "No"
+}
+</script>
+<template>
+    {{ TotalTrainings }}
+    {{ TotalTrainings }}
+    {{ TotalTrainings }}
+    <!--  -->
+    {{ TotalTrainingsNormal() }}
+    {{ TotalTrainingsNormal() }}
+    {{ TotalTrainingsNormal() }}
+</template>
+
+
+
