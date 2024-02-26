@@ -4028,6 +4028,264 @@ const TotalTrainingsNormal = () => {
     {{ TotalTrainingsNormal() }}
     {{ TotalTrainingsNormal() }}
 </template>
+....................................................................................
+				Data Sharing Patterns
+.....................................................................................
+How to share data among vue components?
+
+There are three ways of sharing data 
+
+1.Parent to child - Props pattern
+2.Child to Parent - Event Emittern Pattern.
+3.Across the application - Global Pattern
+
+....................................................................................
+			Child to Parent -Event Emitter Pattern
+....................................................................................
+
+Child Component can emit event along with data, Where as Parent component listent for data.
+
+Event emitter syntax:
+ 
+In the child compoent
+
+const emit =  defineEmits(['change','remove','save'])
+
+//emit the event
+emit('onNameOftheEvent',data)
+
+In the Parent:
+
+<Child @on-nameofftheevent="listener"/>
+
+src/components/counter.vue
+<script setup>
+import { ref } from 'vue';
+const counter = ref(0)
+const emit = defineEmits(['onRequest'])
+
+const onSend = () => {
+    counter.value++
+    //emit event
+    emit('onRequest', counter.value)
+}
+
+</script>
+<template>
+    <h1>Child component-Counter</h1>
+    <button @click="onSend">SendToParent</button>
+</template>
+
+src/App.vue
+<script setup>
+import { ref } from 'vue';
+import Counter from './components/Counter.vue';
+
+const childCounter = ref(0)
+const getChildData = data => {
+    console.log(data)
+    childCounter.value = data
+}
+</script>
+<template>
+    <h1>Parent</h1>
+    <h2>Data from Child {{ childCounter }}</h2>
+
+    <hr />
+    <Counter @on-request="getChildData"></Counter>
+</template>
+....................................................................................
+			   User Interface Design - CSS -Styling
+...................................................................................
+
+CSS types
+
+1.Global Styles
+2.Component spcific styles
+
+
+body {
+    background-color: antiquewhite;
+    margin-left: 50px;
+    margin-top: 50px;
+}
+
+h1 {
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}
+
+h2 {
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+
+How to add thrid party css frameworks like bootstrap?
+
+npm install bootstrap
+
+main.js
+import 'bootstrap/dist/css/bootstrap.min.css'
+
+<script setup>
+</script>
+<template>
+  <div class="container">
+    <h1 style="text-align: center;color:seagreen;">Welcome to MySite</h1>
+    <div class="container text-center">
+      <div class="row">
+        <div class="col">
+          Column
+          Column
+          Column
+          Column
+          Column
+          Column
+          Column
+          Column
+          Column
+          Column
+          Column
+          Column
+          Column
+          Column
+          Column
+          Column
+          Column
+          Column
+
+        </div>
+        <div class="col">
+          Column
+          Column
+          Column
+          Column
+          Column
+          Column
+          Column
+          Column
+          Column Column
+          Column
+          Column
+          Column
+          Column
+          Column
+          Column
+          Column
+          Column Column
+          Column
+          Column
+          Column
+          Column
+          Column
+          Column
+          Column
+          Column Column
+          Column
+          Column
+          Column
+          Column
+          Column
+          Column
+          Column
+          Column Column
+          Column
+          Column
+          Column
+          Column
+          Column
+          Column
+          Column
+          Column
+        </div>
+        <div class="col">
+          Column
+          Column
+          Column
+          Column
+          Column
+          Column
+          Column
+          Column
+          Column Column
+          Column
+          Column
+          Column
+          Column
+          Column
+          Column
+          Column
+          Column Column
+          Column
+          Column
+          Column
+          Column
+          Column
+          Column
+          Column
+          Column
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+<style></style>
+.....................................................................................
+			Dynamic styling -Style Binding
+.....................................................................................
+How to bind css classes dynamically? based on some user interaction.
+
+
+Static class:
+<div class="box">
+
+Dynamic class:
+<div :class="{box:isActive}">
+
+Apply box class based on "isActive" Property.
+
+<script setup>
+import { ref } from 'vue'
+const isActive = ref(false)
+const highLight = () => {
+    if (isActive.value) {
+        isActive.value = false
+    } else {
+        isActive.value = true
+    }
+}
+</script>
+<template>
+    <h1 @mouseover="highLight" :class="{ blockquote: isActive }">Hello</h1>
+</template>
+.....................................................................................
+Assigment:
+ Show list of users , when a user is clicked you have to highlight that user and show that highlighted user details below.
+
+Solution:
+<script setup>
+import { reactive, ref } from 'vue';
+import Heroes from './mock-data/users'
+
+const heroes = reactive(Heroes)
+const selectedHero = ref(null)
+
+const onSelect = (hero) => {
+    selectedHero.value = hero
+}
+</script>
+<template>
+    <ul class="heroes">
+        <li v-for="hero in heroes " @click="onSelect(hero)" :class="{ selected: hero === selectedHero }">
+            <span class="badge">{{ hero.id }}</span> {{ hero.name }}
+        </li>
+    </ul>
+    <div v-if="selectedHero">
+        {{ selectedHero.name }}
+        {{ selectedHero.email }}
+    </div>
+</template>
+<style></style>
+
+
 
 
 
