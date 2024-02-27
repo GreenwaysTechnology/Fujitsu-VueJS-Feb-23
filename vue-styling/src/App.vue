@@ -1,23 +1,21 @@
+<!--  -->
 <script setup>
-import { reactive, ref } from 'vue';
-import Heroes from './mock-data/users'
+import MyButton from './components/MyButton.vue';
 
-const heroes = reactive(Heroes)
-const selectedHero = ref(null)
-
-const onSelect = (hero) => {
-    selectedHero.value = hero
-}
 </script>
 <template>
-    <ul class="heroes">
-        <li v-for="hero in heroes " @click="onSelect(hero)" :class="{ selected: hero === selectedHero }">
-            <span class="badge">{{ hero.id }}</span> {{ hero.name }}
-        </li>
-    </ul>
-    <div v-if="selectedHero">
-        {{ selectedHero.name }}
-        {{ selectedHero.email }}
-    </div>
+    <!-- Here we pass class attribute as prop: attribute inheritance -->
+    <MyButton class="fancy-btn"></MyButton>
 </template>
-<style></style>
+<style>
+.fancy-btn {
+    background-color: #4CAF50;
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline;
+    font-size: 16px;
+}
+</style>

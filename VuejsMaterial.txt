@@ -4285,6 +4285,610 @@ const onSelect = (hero) => {
 </template>
 <style></style>
 
+			Fall through Attributes
+.....................................................................................
+Attribute Inheritance:(HTML attributes (class) as Prop.
+.......................................................
+
+A Fall through attribute is an attribute or v-on listeners that is passed to component but it is not explcitly declared in the receiving components (Child) via props or emits.
+
+	  Properties are inherited from the parent component to child component
+	                    "class,style and id attributes"
+			
+
+
+src/App.vue
+<!--  -->
+<script setup>
+import MyButton from './components/MyButton.vue';
+
+</script>
+<template>
+    <!-- Here we pass class attribute as prop: attribute inheritance -->
+    <MyButton class="fancy-btn"></MyButton>
+</template>
+<style>
+.fancy-btn {
+    background-color: #4CAF50;
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline;
+    font-size: 16px;
+}
+</style>
+
+src/components/MyButton.vue
+<!--  -->
+<script setup>
+</script>
+<template>
+    <button>Click</button>
+</template>
+<style></style>
+
+
+Now we can see the output the button automatically inherited the property..
+via special variable called "attrs"...
+
+if you want to access those attributes inside script...
+
+
+Two places:
+
+1.inside template
+2.inside script block
+
+<script>
+ export default {
+     created(){
+	 console.log(this.$attrs)
+      }
+ }
+</script>
+using setup attribute:
+<!--  -->
+<script setup>
+import { useAttrs } from 'vue';
+const attrs = useAttrs()
+console.log(attrs)
+</script>
+<template>
+    <button>Click</button>
+</template>
+<style></style>
+
+What if i have container elements?
+
+<div>
+  <button>{{ title }}</button>
+</div>
+
+Now you can see output is applied to only div element not button element.
+
+What if i want to apply
+
+we need to bind explicitly using "v-bind="$attrs"
+<div style="background-color: ;">
+        <button v-bind="$attrs">{{ title }}</button>
+</div>
+
+What if i have multiple elements to apply the same style?
+ <button v-bind="$attrs">{{ title }}</button>
+    <button v-bind="$attrs">{{ title }}</button>
+
+eg:
+
+<script setup>
+const props = defineProps(['title'])
+</script>
+<template>
+    <div style="background-color: ;">
+        <button v-bind="$attrs">{{ title }}</button>
+    </div>
+    <button v-bind="$attrs">{{ title }}</button>
+    <button v-bind="$attrs">{{ title }}</button>
+</template>
+<style></style> 
+
+....................................................................................
+	 Can we override parent class attribute in child component
+....................................................................................
+Yes, but default which is not overriden.
+
+How to override?
+Yes, but default which is not overriden.
+
+How to override?
+
+Scoped style.
+<!-- <script setup>
+import { useAttrs } from 'vue';
+
+const props = defineProps(['title'])
+const attrs = useAttrs()
+console.log(attrs)
+</script>
+<template>
+     <button>{{ title }}</button> -->
+    <!-- <span>{{ $attrs }}</span> -->
+    <!-- <span>{{ attrs }}</span>
+</template>
+<style></style> --> 
+
+<script setup>
+const props = defineProps(['title'])
+</script>
+<template>
+    <div style="background-color: ;">
+        <button v-bind="$attrs">{{ title }}</button>
+    </div>
+    <button v-bind="$attrs">{{ title }}</button>
+    <button v-bind="$attrs">{{ title }}</button>
+</template>
+<style scoped>
+.fancy-btn {
+    background-color: #4c56af;   
+}
+</style> 
+....................................................................................
+		What if  i dont want attribute inheritance
+...................................................................................
+
+If your template is having more elements, attribute inheritance cant be stopped.
+if your template having single element , it can be stopped.
+
+<script setup>
+const props = defineProps(['title'])
+defineOptions({
+    inheritAttrs: false
+})
+</script>
+<template>
+    <!-- <div style="background-color: ;">
+        <button v-bind="$attrs">{{ title }}</button>
+    </div>
+    <button v-bind="$attrs">{{ title }}</button>
+    <button v-bind="$attrs">{{ title }}</button> -->
+    <button>{{ title }}</button>
+</template>
+<style scoped>
+.fancy-btn {
+    background-color: #4c56af;
+}
+</style> 
+...................................................................................
+			      Slot
+			(Compoent as Prop)
+....................................................................................
+
+What can be a prop? What can be passed as prop from parent compoent to child prop?
+
+1.Primitives -String,numbers,boolean
+2.Objects 
+3.Collection as prop.
+4.class as prop - attribute inheritance.
+5.Component as prop - Slot
+
+How to represent Compoents?
+
+ <MyComponent>
+    ? ---> Child element -It could be DOM element or Another component
+</MyCompoent>
+ <MyComponent/> --->Component has no children
+
+eg:
+<Tab>
+    <VideoPlayer>
+<Tab>
+
+<Tab>
+    <Grid>
+<Tab>
+
+How to render videoplayer or grid?
+
+ In order to access element or component as prop inside child (Tab) component vue offers "bulit in component -slot" - Which acts as place holder where the elements to be inserted.
+
+src/App.component
+
+<script setup>
+import Tab from './components/Tab.vue';
+import VideoPlayer from './components/VideoPlayer.vue';
+
+
+</script>
+<template>
+  <Tab>
+    <VideoPlayer />
+  </Tab>
+</template>
+<style scoped></style>
+
+
+src/components/Tab.vue
+<script setup>
+
+</script>
+<template>
+     <slot></slot>
+</template>
+<style scoped></style> 
+
+src/components/VideoPlayer.vue
+<script setup>
+
+</script>
+<template>
+    <h1>Vido Player</h1>
+</template>
+<style scoped></style>
+.....................................................................................
+.....................................................................................
+				Fallback Content
+....................................................................................
+
+What if i dont want to pass "element/component" as prop, if you want to display something if you dont pass-fallback.
+
+
+<div>
+    <ChildSlot>
+	<h1>Here we are passing element</h1>
+    </ChildSlot>
+</div>
+
+
+<div>
+    <ChildSlot>
+	<!--No element is passed-->
+    </ChildSlot>
+</div>
+
+src/components/Tab.vue
+<script setup>
+
+</script>
+<template>
+    <slot>
+        <!-- Fallback Content -->
+        <h1>Nothing Found</h1>
+    </slot>
+</template>
+<style scoped></style>
+
+src/App.vue
+<script setup>
+import Tab from './components/Tab.vue';
+import VideoPlayer from './components/VideoPlayer.vue';
+
+
+</script>
+<template>
+  <Tab>
+    <!-- <VideoPlayer /> -->
+  </Tab>
+</template>
+<style scoped></style>
+.....................................................................................
+			 Multi Slots
+...................................................................................
+
+
+We can have more than one slot:
+
+Without slot:
+<Layout>
+   <Header/>
+   <Body/>
+   <Footer/>
+</Layout>
+
+<Layout>
+   <Header>
+	<!--Header Information -->
+   </Header>
+   <Body>
+	<!--Body Information -->
+   </Body>
+   <Footer>
+	<!--Footer Information -->
+  </Footer>
+</Layout>
+
+Eg:
+ Child
+  <slot name="header"></slot>
+
+ Parent
+  <template v-slot:header></template>
+
+
+eg
+src/App.component
+<script setup>
+import Layout from './components/Layout.vue'
+import Header from './components/Header.vue'
+import Footer from './components/Footer.vue'
+import Body from './components/Body.vue'
+</script>
+<template>
+    <Layout>
+        <template v-slot:header>
+            <Header />
+        </template>
+        <template v-slot:body>
+            <Body />
+        </template>
+        <template v-slot:footer>
+            <Footer />
+        </template>
+    </Layout>
+</template>
+<style scoped></style>
+
+src/components/Layout.vue
+<script setup>
+
+</script>
+<template>
+    <slot name="header">
+        <h1>Default header</h1>
+    </slot>
+    <slot name="body">
+        <h1>Default body</h1>
+
+    </slot>
+    <slot name="footer">
+        <h1>Default footer</h1>
+
+    </slot>
+</template>
+<style scoped></style>
+
+src/components/Header.vue
+<script setup>
+
+</script>
+<template>
+    <h1>Header</h1>
+</template>
+<style scoped></style>
+
+src/components/Body.vue
+<script setup>
+
+</script>
+<template>
+    <p>body</p>
+</template>
+<style scoped></style>
+
+src/components/Footer.vue
+<script setup>
+
+</script>
+<template>
+    <p>Footer</p>
+</template>
+<style scoped></style>
+..................................................................................
+				Without V-slot directive, We can use #name
+..................................................................................
+With vslot directive.
+<template>
+    <h1>Vue Application</h1>
+    <Layout>
+        <!-- Nested Templates -->
+        <template v-slot:header>
+            <h1>Header</h1>
+        </template>
+        <template v-slot:body>
+            <h1>Body</h1>
+        </template>
+        <template v-slot:footer>
+            <h1>Footer</h1>
+        </template>
+    </Layout>
+</template>
+
+without v-slot directive: using #name
+<template>
+    <h1>Vue Application</h1>
+    <Layout>
+        <template #header>
+            <h1>Header</h1>
+        </template>
+        <template #body>
+            <h1>Body</h1>
+        </template>
+        <template #footer>
+            <h1>Footer</h1>
+        </template>
+    </Layout>
+</template>
+
+.....................................................................................				   Default Slots
+....................................................................................
+
+The slot without name is called "default slot".
+
+In case of multi slot, we can make any one slot as default one.
+.....................................................................................				   Default Slots
+....................................................................................
+
+The slot without name is called "default slot".
+
+In case of multi slot, we can make any one slot as default one.
+
+Child:
+<script setup>
+</script>
+<template>
+    <div>
+        <header>
+            <!-- <slot name="header">
+                <h1>Default Header</h1>
+            </slot> -->
+            <!-- Default slot -->
+            <slot>
+                <h1>Default Header</h1>
+            </slot>
+        </header>
+        <main>
+            <slot name="body">
+                <p>Default main</p>
+            </slot>
+        </main>
+        <footer>
+            <slot name="footer">
+                <p>Default footer</p>
+            </slot>
+        </footer>
+    </div>
+</template>
+
+In the parent:
+<template>
+    <h1>Vue Application</h1>
+    <Layout>
+        <!-- <template #header>
+            <h1>Header</h1>
+        </template> -->
+        <template #default>
+            <h1>Header</h1>
+        </template>
+        <template #body>
+            <h1>Body</h1>
+        </template>
+        <template #footer>
+            <h1>Footer</h1>
+        </template>
+    </Layout>
+</template>
+....................................................................................
+.....................................................................................
+				Dynamic slots
+.....................................................................................
+
+The slot names can be dynamic, that means we can add slot name via reactive 
+
+Static slot:
+<template v-slot:header>
+<template #header>
+<template #default>
+
+Dynamic slots:
+
+const header = ref('header')
+
+<template v-slot:[header]>
+<template #[header]>
+
+
+The slot names can be dynamic, that means we can add slot name via reactive 
+
+Static slot:
+<template v-slot:header>
+<template #header>
+<template #default>
+
+Dynamic slots:
+
+const header = ref('header')
+
+<template v-slot:[header]>
+<template #[header]>
+
+
+eg:
+
+<script setup>
+import { ref } from 'vue';
+import Layout from './components/slots/Layout.vue';
+
+const header = ref('header')
+</script>
+<template>
+    <h1>Vue Application</h1>
+    <Layout>
+        <template #[header]>
+            <h1>Header</h1>
+        </template>
+        <template #default>
+            <h1>Header</h1>
+        </template>
+        <template #body>
+            <h1>Body</h1>
+        </template>
+        <template #footer>
+            <h1>Footer</h1>
+        </template>
+    </Layout>
+</template>
+....................................................................................
+		Global Data sharing-Dependency Injection : Composition api
+....................................................................................
+
+Prop Driling:
+
+ When you pass data from the parent component to child, from child to its child and so on, at each level you have to pass props manually
+
+    			Root
+			 |
+			 props
+			 |
+			Child1
+			 |props
+			Child2
+			 |props
+			Child3
+			 |props
+		        Child-N
+
+
+
+<script setup>
+import { ref } from 'vue';
+import Child1 from './propsdrilling/Child1.vue';
+const message = ref('Hello')
+</script>
+<template>
+    <h1>Root</h1>
+    <Child1 :message="message" />
+</template>
+
+Child1.vue
+<script setup>
+import Child2 from './Child2.vue';
+const props = defineProps(['message'])
+</script>
+<template>
+    <h1>Child 1</h1>
+    <Child2 :message="props.message" />
+</template>
+
+Child2.vue
+<script setup>
+import Child3 from './Child3.vue';
+const props = defineProps(['message'])
+
+</script>
+<template>
+    <h1>Child 2</h1>
+    <Child3 :message="props.message" />
+</template>
+
+Child3.vue
+<script setup>
+const props = defineProps(['message'])
+
+</script>
+<template>
+    <h1>Child 3 {{ props.message }}</h1>
+</template>
+
 
 
 
