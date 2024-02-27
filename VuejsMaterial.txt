@@ -4889,7 +4889,189 @@ const props = defineProps(['message'])
     <h1>Child 3 {{ props.message }}</h1>
 </template>
 
+.....................................................................................
+			  Form Handling
+.....................................................................................
+
+Form Controls:
+1.text / password
+2.Multi line text
+3.checkbox
+4.radio
+5.select
+6.submit
+7.reset
 
 
+How to get input from the keyboard via form controls and bind in the ui
+
+<script setup>
+import { ref } from 'vue';
+
+const name = ref('')
+const getInput = evt => {
+  console.log(evt.target.value)
+  name.value = evt.target.value
+}
+</script>
+<template>
+  <h1>Name {{ name }}</h1>
+  <input @input="getInput">
+</template>
+
+Two way data binding:
+
+When ever user interacts via typing in the text box, the reactive variable is updated,
+when ever reactive variable is updated, the UI is rerendered.
+
+:value property  is used to initalize the default reactive state variable in side text box
+
+<script setup>
+import { ref } from 'vue';
+
+const name = ref('Default name')
+const getInput = evt => {
+  console.log(evt.target.value)
+  name.value = evt.target.value
+}
+</script>
+<template>
+  <h1>Name {{ name }}</h1>
+  <input @input="getInput" :value="name">
+</template>
+.....................................................................................
+				How to reduce listeners
+....................................................................................
+When we have more input fields, we need to write more event listeners, which can be avoided in two ways
+
+1.inline event listener
+2.Using v-model directive
 
 
+1.Inline event listener
+<script setup>
+import { ref } from 'vue';
+const name = ref('Default name')
+
+</script>
+<template>
+    <h1>Name {{ name }}</h1>
+    <!-- Inline Listener -->
+    <input @input="evt => name = evt.target
+        .value" :value="name">
+</template>
+
+2.Using v-model directive
+
+
+v-model directive can be used on other input controls as well.
+
+textarea
+  it uses value property and input event
+
+checkbox
+radio
+  It uses checked property and change event
+select
+ It uses value property and input event .
+
+................................................................
+
+textbox: with model directive:
+<script setup>
+import { ref } from 'vue';
+const name = ref('Default name')
+
+</script>
+<template>
+    <h1>Name {{ name }}</h1>
+    <input v-model="name">
+</template>
+
+
+TextArea With v-model directive:
+
+<script setup>
+import { ref } from 'vue';
+const mail = ref('')
+
+</script>
+<template>
+    <h1>Mail {{ mail }}</h1>
+    <label id="mail">Mail</label>
+    <textarea v-model="mail"  />
+</template>
+
+CheckBox:
+<script setup>
+import { ref } from 'vue';
+const values = ref([])
+
+</script>
+<template>
+    <h1>Course Information</h1>
+    <input type="checkbox" id="frontend" value="FrontEnd" v-model="values" />
+    <label for="frontend">Front End</label>
+    <input type="checkbox" id="backend" value="Backend" v-model="values" />
+    <label for="backend">Back End</label>
+    <input type="checkbox" id="devops" value="Devops" v-model="values" />
+    <label for="devops">Devops</label>
+    <div>
+        <h2>Selected Courses</h2>
+        <ul>
+            <li v-for="course in values">
+                <span>{{ course }}</span>
+            </li>
+        </ul>
+    </div>
+</template>
+.........................
+Radio:
+<script setup>
+import { ref } from 'vue';
+
+const choice = ref('Male')
+</script>
+<template>
+    <div>
+        <h1>Select Gender</h1>
+        <input type="radio" id="Male" value="Male" checked v-model="choice" />
+        <label for="Male">Male</label>
+        <input type="radio" id="Female" value="Female" v-model="choice" />
+        <label for="Female">Female</label>
+        <input type="radio" id="ThirdGender" value="ThirdGender" v-model="choice" />
+        <label for="ThirdGender">ThirdGender</label>
+    </div>
+    <div>
+        You Have selected {{ choice }}
+    </div>
+</template>
+..................................................................................
+Select:
+<script setup>
+import { ref } from 'vue';
+
+const courses = ref(["Vue", "Angular", "Microservices"])
+const selectedCourses = ref('Microservices')
+</script>
+<template>
+    <div>
+        <select v-model="selectedCourses">
+            <option disabled value>Select Your Course</option>
+            <option v-for="course of courses">
+                {{ course }}
+            </option>
+        </select>
+    </div>
+    <div>
+        Your course is {{ selectedCourses }}
+    </div>
+</template>
+<style></style>
+.....................................................................................
+
+Composables
+Life cycle hooks
+Api connect...
+Routing -menus
+State management -using Pina /Vueex(old)
