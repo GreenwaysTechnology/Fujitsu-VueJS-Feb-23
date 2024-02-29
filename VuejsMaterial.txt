@@ -5922,3 +5922,629 @@ App.vue
 <template>
     <h1>{{ $uppercase('Vue Plugins') }}</h1>
 </template>
+....................................................................................
+				SPA - Single Page web app
+...................................................................................
+SPA is type of web appication built for browsers, all navigations are done by javascript and html with in browser.
+
+SPA is other wise client side routing...
+
+
+SPA Core features:
+
+1.all navigation is controlled by inside browser only
+2.From the server we get only data via apis as json format
+3.In SPA, Only we have one Physical page called landing page /home page
+4.Name of the landing page would be "index.html"
+5.Rest of the application page are called "Virtual pages" which are created by js dynamically we call as "Components".
+6.Navigation is controlled by js object called "location and history objects"
+7.Frameworks for routing is built on the top of these objects only.
+8.In order to build routing we need "HTML5"
+
+Routing can be implmented  using plain js, html5,ajax, css3 itself. but in large scale we need framework, Vue supports official "Vue Router" which is supplied as "Plugin".
+
+How to integrate vue Router?
+
+A.
+1.with existing app
+ npm install vue-router@4
+2.App configuration
+  app.use(router).
+
+B.When create new App
+
+....................................................................................
+Web Apps url patterns:
+......................
+
+1.static url
+   http://www.example.com/products.html
+2.dynamic web url
+   http://www.example.com/product.jsp | product.php | product.aspx
+3.web service url
+   http://www.example.com/api/products
+4.SPA Web url
+   Like web serivce url
+  http://www.example.com/products
+  hash based url pattern:
+  http://www.example.com/api/index.html#hello | #products
+
+Steps for building SPA Applications:
+
+src/components
+     |
+    Users
+    products
+  composables
+  plugins
+  directives
+  router
+  pages(views)
+
+Pages(views) vs Components:
+
+1.Page(View) itself is component , which is place holder component which displays BASIC UI
+2.Component displays domain models like ShoppingCart, ProductList,ProductCategory..
+
+
+Application Flow:
+
+ User-- Clicks-Link----Render View(Page)-->Render Domain Components
+
+router Configurtion:
+
+ When i click the hyperlink, i need to show some Page, in order to show page, we need to configure, where to configure?
+
+ Route configuration.
+
+import { createRouter, createWebHistory } from 'vue-router'
+import HomeView from '../views/HomeView.vue'
+
+const router = createRouter({
+  history: createWebHistory(import.meta.env.BASE_URL),
+  routes: [
+    {
+      path: '/',
+      name: 'home',
+      component: HomeView
+    },
+    {
+      path: '/about',
+      name: 'about',
+      // route level code-splitting
+      // this generates a separate chunk (About.[hash].js) for this route
+      // which is lazy-loaded when the route is visited.
+      //async component
+      component: () => import('../views/AboutView.vue')
+    }
+  ]
+})
+
+export default router
+....................................................................................	
+			  Adding new Router
+.....................................................................................
+
+import { createRouter, createWebHistory } from 'vue-router'
+import HomeView from '../views/HomeView.vue'
+import CounterView from '../views/CounterView.vue'
+
+const router = createRouter({
+  history: createWebHistory(import.meta.env.BASE_URL),
+  routes: [
+    {
+      path: '/',
+      name: 'home',
+      component: HomeView
+    },
+    {
+      path: '/about',
+      name: 'about',
+      // route level code-splitting
+      // this generates a separate chunk (About.[hash].js) for this route
+      // which is lazy-loaded when the route is visited.
+      //async component
+      component: () => import('../views/AboutView.vue')
+    }, {
+      path: '/counter',
+      name: 'counter',
+      component: CounterView
+    }
+  ]
+})
+
+export default router
+
+App.vue
+<!-- Landing Page -->
+<script setup>
+import { RouterLink, RouterView } from 'vue-router';
+</script>
+<template>
+  <div style="margin-left: 10px;">
+    <h1 style="text-align: center;"> Router Application</h1>
+    <hr>
+    <!-- Menu Bar -->
+    <nav>
+      <ul>
+        <li>
+          <RouterLink to="/">Home</RouterLink>
+        </li>
+        <li>
+          <RouterLink to="/about">About</RouterLink>
+        </li>
+        <li>
+          <RouterLink to="/counter">Counter</RouterLink>
+        </li>
+      </ul>
+    </nav>
+    <hr>
+    <!-- Place holder component to display pages -->
+    <RouterView />
+  </div>
+</template>
+
+src/views/CounterView.vue
+<script setup>
+import Counter from '../components/counter/Counter.vue'
+</script>
+<template>
+    <Counter></Counter>
+</template>
+
+src/counter/Counter.vue
+<script setup>
+import { ref } from 'vue'
+const value = ref(0)
+</script>
+<template>
+    <h1>Counter App</h1>
+    <h3>Value {{ value }}</h3>
+    <button @click="value++">+</button>
+</template>
+.....................................................................................
+				 Path and Url
+
+
+1.static url/path
+  '/home' ,'/counter'
+2.dynamic url/path
+  'users/:id' => 'users/1' ,'users/2'
+
+Syntax:
+ {
+      path: '/users/:id',
+      name: 'users',
+      component:UsersView
+    }
+
+<script setup>
+</script>
+<template>
+    <h1>Users View</h1>
+</template>
+
+http://localhost:5173/users/1
+
+How to read route Parameter?
+
+There are two places , you can read route params.
+
+1.Inside template
+  $route.params
+  $route.params.id
+2.Inside script
+ 
+import {useRoute} from 'vue-router'
+
+const route =useRoute()
+
+console.log(route.params.id)
+
+<script setup>
+import { useRoute } from 'vue-router';
+const route = useRoute()
+console.log(route.params)
+</script>
+<template>
+    <h1>Users View</h1>
+    <h2>{{ $route.params.id }}</h2>
+</template>
+.......................................................................................			Master Detail Page
+.....................................................................................
+
+Router Configuration:
+
+Master configuration
+--Write api call to get data from the api...
+			
+src/router/index.js
+import { createRouter, createWebHistory } from 'vue-router'
+import HomeView from '../views/HomeView.vue'
+import CounterView from '../views/CounterView.vue'
+import UsersMasterView from '../views/UsersMasterView.vue'
+
+const router = createRouter({
+  history: createWebHistory(import.meta.env.BASE_URL),
+  routes: [
+    {
+      path: '/users',
+      name: 'users',
+      component: UsersMasterView
+    }
+  ]
+})
+
+export default router
+
+src/App.vue
+<!-- Landing Page -->
+<script setup>
+import { RouterLink, RouterView } from 'vue-router';
+</script>
+<template>
+  <div style="margin-left: 10px;">
+    <h1 style="text-align: center;"> Router Application</h1>
+    <hr>
+    <!-- Menu Bar -->
+    <nav>
+      <ul>
+        <li>
+          <RouterLink to="/">Home</RouterLink>
+        </li>
+        <li>
+          <RouterLink to="/about">About</RouterLink>
+        </li>
+        <li>
+          <RouterLink to="/counter">Counter</RouterLink>
+        </li>
+        <li>
+          <RouterLink to="/users">Users</RouterLink>
+        </li>
+      </ul>
+    </nav>
+    <hr>
+    <!-- Place holder component to display pages -->
+    <RouterView />
+  </div>
+</template>
+
+src/components/views/UserMasterView.vue
+
+<script setup>
+import { useFetch } from '../composables/useFetch'
+const { data, error } = useFetch('https://jsonplaceholder.typicode.com/users')
+
+</script>
+<template>
+    <h1>Users Master Page</h1>
+    <!-- Conditional rendering -->
+    <div v-if="error">{{ error.message }}</div>
+    <div v-else-if="data">
+        <ul>
+            <li v-for="user of data">
+                {{ user.name }}
+            </li>
+        </ul>
+    </div>
+    <!-- Display spinner -->
+    <div v-else>
+        <h1>Loading....</h1>
+    </div>
+</template>
+
+Detail Page:
+...........
+src/router/index.js
+import { createRouter, createWebHistory } from 'vue-router'
+import HomeView from '../views/HomeView.vue'
+import CounterView from '../views/CounterView.vue'
+import UsersMasterView from '../views/UsersMasterView.vue'
+import UsersDetailsView from '../views/UsersDetailsView.vue'
+
+const router = createRouter({
+  history: createWebHistory(import.meta.env.BASE_URL),
+  routes: [
+    {
+      path: '/users',
+      name: 'users',
+      component: UsersMasterView
+    },
+    {
+      path: '/users/:id',
+      name: 'usersdetails',
+      component: UsersDetailsView.vue
+    }
+  ]
+})
+
+export default router
+
+..
+
+src/views/UserDetailsView.vue
+<script setup>
+import { useRoute } from 'vue-router';
+const route = useRoute()
+console.log(route.params)
+</script>
+<template>
+    <h1>Users View</h1>
+    <h2>{{ $route.params.id }}</h2>
+</template>
+
+Here you get, dynamic param.
+
+Task: You have to talk to api to get indivdual user data.
+..................................................................................
+				Named Routes
+..................................................................................
+Without Named Route:
+  {
+      path: '/details/:id',      
+      component: UsersDetailsView
+    }
+
+With Named Route:
+ {
+      path: '/details/:id',
+      name: 'details',
+      component: UsersDetailsView
+    }
+What is use of "name"?
+
+    <RouterLink :to="`/details/${user.id}`">
+                    {{ user.name }}
+       </RouterLink>
+
+Here we use url mapping using string interpolation ``
+
+This can be simplified by using name property.
+
+
+    <RouterLink :to="`/details/${user.id}`">
+                    {{ user.name }}
+       </RouterLink>
+
+eg:
+         <RouterLink :to="{ name: 'details', params: { id: user.id } }">
+                    {{ user.name }}
+                </RouterLink>
+.....................................................................................
+			 Nested Routing
+....................................................................................
+Building sub Menus
+
+Movie
+ |
+ Sci
+ Adv
+ Drama
+ Horror
+ Family
+ 
+Route Configuration:
+
+  {
+      path: '/movies',
+      name: 'movies',
+      component: MovieView,
+      children:[
+        {path:'action',component:ActionView}
+      ]
+
+    }
+
+eg:
+import { createRouter, createWebHistory } from 'vue-router'
+import HomeView from '../views/HomeView.vue'
+import CounterView from '../views/CounterView.vue'
+import UsersMasterView from '../views/UsersMasterView.vue'
+import UsersDetailsView from '../views/UsersDetailsView.vue'
+import MoviesView from '../views/MoviesView.vue'
+
+const router = createRouter({
+  history: createWebHistory(import.meta.env.BASE_URL),
+  routes: [
+    {
+      path: '/',
+      name: 'home',
+      component: HomeView
+    },
+    {
+      path: '/about',
+      name: 'about',
+      // route level code-splitting
+      // this generates a separate chunk (About.[hash].js) for this route
+      // which is lazy-loaded when the route is visited.
+      //async component
+      component: () => import('../views/AboutView.vue')
+    }, {
+      path: '/counter',
+      name: 'counter',
+      component: CounterView
+    },
+    {
+      path: '/users',
+      name: 'users',
+      component: UsersMasterView
+    },
+    {
+      path: '/details/:id',
+      name: 'details',
+      component: UsersDetailsView
+    },
+    {
+      path: '/movies',
+      name: 'movies',
+      component: MoviesView,
+      children: [
+        {
+          path: 'action',
+          name: 'action',
+          component: () => import('../views/ActionMovie.vue')
+        },
+        {
+          path: 'horror',
+          name: 'horror',
+          component: () => import('../views/HorrorMovie.vue')
+        }
+      ]
+    }
+  ]
+})
+
+export default router
+
+App.vue
+<!-- Landing Page -->
+<script setup>
+import { RouterLink, RouterView } from 'vue-router';
+</script>
+<template>
+  <div style="margin-left: 10px;">
+    <h1 style="text-align: center;"> Router Application</h1>
+    <hr>
+    <!-- Menu Bar -->
+    <nav>
+      <ul>
+        <li>
+          <RouterLink to="/">Home</RouterLink>
+        </li>
+        <li>
+          <RouterLink to="/about">About</RouterLink>
+        </li>
+        <li>
+          <RouterLink to="/counter">Counter</RouterLink>
+        </li>
+        <li>
+          <RouterLink to="/users">Users</RouterLink>
+        </li>
+        <li>
+          <RouterLink to="/movies">Movies</RouterLink>
+        </li>
+      </ul>
+    </nav>
+    <hr>
+    <!-- Place holder component to display pages -->
+    <RouterView />
+  </div>
+</template>
+
+src/views/MoviesView.vue
+<script setup>
+import { RouterView } from 'vue-router';
+</script>
+<template>
+    <h1>Movie Page</h1>
+    <ul>
+        <li>
+            <RouterLink to="/movies/action">
+                <span>Action</span>
+            </RouterLink>
+        </li>
+        <li>
+            <RouterLink to="/movies/horror">
+                <span>Horror</span>
+            </RouterLink>
+        </li>
+    </ul>
+    <!-- Place holder component to display pages -->
+    <RouterView />
+</template>
+
+src/views/ActionView.vue
+<script setup>
+</script>
+<template>
+    <h1>Action Movies Page</h1>
+</template>
+
+src/views/HorroView.vue
+<script setup>
+</script>
+<template>
+    <h1>Horror Movies Page</h1>
+</template>
+...................................................................................
+			  Redirections
+..................................................................................
+Redirections will redirect to a particular path.
+WHile redirections, it will display, url in the browser
+
+import { createRouter, createWebHistory } from 'vue-router'
+import HomeView from '../views/HomeView.vue'
+import CounterView from '../views/CounterView.vue'
+import UsersMasterView from '../views/UsersMasterView.vue'
+import UsersDetailsView from '../views/UsersDetailsView.vue'
+import MoviesView from '../views/MoviesView.vue'
+
+const router = createRouter({
+  history: createWebHistory(import.meta.env.BASE_URL),
+  routes: [
+    {
+      path: '/',
+      redirect: {
+        name: 'home'
+      }
+    },
+
+    {
+      path: '/home',
+      name: 'home',
+      component: HomeView
+    },
+    {
+      path: '/about',
+      name: 'about',
+      // route level code-splitting
+      // this generates a separate chunk (About.[hash].js) for this route
+      // which is lazy-loaded when the route is visited.
+      //async component
+      component: () => import('../views/AboutView.vue')
+    }, {
+      path: '/counter',
+      name: 'counter',
+      component: CounterView
+    },
+    {
+      path: '/users',
+      name: 'users',
+      component: UsersMasterView
+    },
+    {
+      path: '/details/:id',
+      name: 'details',
+      component: UsersDetailsView
+    },
+    {
+      path: '/movies',
+      name: 'movies',
+      component: MoviesView,
+      children: [
+        {
+          path: '',
+          redirect: {
+            name: 'action'
+          }
+        },
+        {
+          path: 'action',
+          name: 'action',
+          component: () => import('../views/ActionMovie.vue')
+        },
+        {
+          path: 'horror',
+          name: 'horror',
+          component: () => import('../views/HorrorMovie.vue')
+        }
+      ]
+    }
+  ]
+})
+
+export default router
+
+
+
+
