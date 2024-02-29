@@ -5194,6 +5194,7 @@ other keyboard keys modifiers
 Like Angular, Vue does not have any inbuilt feature to validate form.
 We have to write validation logic ourselfs.
 There are thrid party libs also there to validate forms.
+
 <script setup>
 import { reactive } from 'vue';
 
@@ -5745,7 +5746,8 @@ const { data, error } = useFetch(url)
 <template>
     <h1>Todo App :(Fetch data from api)</h1>
     <!-- Conditional rendering -->
-    <div v-if="error">{{ error.message }}</div>
+    <div v-if="
+">{{ error.message }}</div>
     <div v-else-if="data">
         <ul>
             <li v-for="todo of data">
@@ -5758,4 +5760,165 @@ const { data, error } = useFetch(url)
         <h1>Loading....</h1>
     </div>
 </template>
+.....................................................................................
+			Custom Directives
+....................................................................................
+Directives are used to reuse dom features.
 
+Types of directives
+
+1.built in directives
+2.Custom Directives
+
+How to create simple custom directives?
+
+Every Directive is plain object.
+
+<script setup>
+const vFocus = {
+  //define life cycle methods
+  mounted: (element) => {
+    //we can get dom element here, on which element you have attached 
+    console.log(element)
+    element.focus()
+
+  }
+}
+</script>
+<template>
+  <h1>Custom Directives</h1>
+  <input v-focus>
+</template>
+....................................................................................
+			  DOM Manipulation using Directives
+....................................................................................
+<script setup>
+const vHighlight = {
+    mounted: (element) => {
+        element.addEventListener('mousemove', evt => {
+            highlight('yellow')
+        })
+        element.addEventListener('mouseleave', evt => {
+            highlight(null)
+        })
+        const highlight = color => {
+            element.style.backgroundColor = color
+        }
+    }
+
+}
+</script>
+<template>
+    <h1 v-highlight>Custom Directives</h1>
+</template>
+.....................................................................................
+		     Generally directives are created globally.
+
+// import './assets/main.css'
+
+import { createApp } from 'vue'
+import App from './App.vue'
+
+createApp(App)
+    .directive('foucs', (element, binding) => {
+        console.log(element)
+        element.focus()
+    })
+    .mount('#app')
+
+
+
+
+.....................................................................................
+			  Directive Parameters,Modifiers,Args
+.....................................................................................
+
+Eg:
+<input v-bind:value="msg">
+		      |
+		   parameter
+
+// import './assets/main.css'
+
+import { createApp } from 'vue'
+import App from './App.vue'
+
+createApp(App)
+    .directive('foucs', (element, binding) => {
+        console.log(element)
+        element.focus()
+    })
+    .directive('highlight', (element, binding) => {
+        console.log('element', element)
+        console.log('binding', binding)
+        element.style.backgroundColor = binding.value
+        element.addEventListener('mousemove', evt => {
+            highlight('yellow')
+        })
+        element.addEventListener('mouseleave', evt => {
+            highlight(binding.value)
+        })
+        const highlight = color => {
+            element.style.backgroundColor = color
+        }
+    })
+    .mount('#app')
+.....................................................................................
+			  Plugins
+.....................................................................................
+What is plugin?
+
+   Plugins are self contained code that usually add top level functionality to vue.
+Most of the third party libs are integrated as plugin with vue echo system.
+eg: Vue-Router,State Management libs like vuex,Pinia...
+
+Plugins are distributed as npm moudles,in order to use plugins, we have to do two things
+
+1.install plugin as npm module
+2.Integrate with application object
+
+const app =createApp(App)
+
+app.directives()
+app.component()
+app.provide()
+
+//plugins
+app.use(myPlugin)
+app.use(router)
+app.use(pina)
+
+How to write custom plugins?
+
+src/plugins/myPlugin.js
+
+export const myPlugin = {
+    //install method 
+    install(app, options) {
+        //applications object referenced in the plugin as first Parameter.
+        console.log(app)
+        //add new api into application object so that, that will be available across the app 
+        app.config.globalProperties.$uppercase = key => {
+            return key.toUpperCase()
+        }
+    }
+}
+
+src/main.js
+// import './assets/main.css'
+
+import { createApp } from 'vue'
+import App from './App.vue'
+import { myPlugin } from './plugins/myPlugin'
+
+createApp(App)
+    //register plugin
+    .use(myPlugin)
+    .mount('#app')
+
+App.vue
+<script setup>
+</script>
+<template>
+    <h1>{{ $uppercase('Vue Plugins') }}</h1>
+</template>
