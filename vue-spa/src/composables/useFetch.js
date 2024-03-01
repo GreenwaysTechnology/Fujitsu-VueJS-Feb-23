@@ -15,7 +15,8 @@ export function useFetch(url) {
         }
     }
     onMounted(() => {
-        init()
+        setTimeout(() => { init() }, 5000)
+        //init()
     })
     return {
         data, error

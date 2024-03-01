@@ -1,21 +1,21 @@
-<!--  -->
 <script setup>
-import MyButton from './components/MyButton.vue';
-
+import { ref } from 'vue';
+const show = ref(true)
 </script>
 <template>
-    <!-- Here we pass class attribute as prop: attribute inheritance -->
-    <MyButton class="fancy-btn"></MyButton>
+    <button @click="show = !show">Toggle</button>
+    <Transition>
+        <h1 style="color: brown;" v-if="show">Hello</h1>
+    </Transition>
 </template>
 <style>
-.fancy-btn {
-    background-color: #4CAF50;
-    border: none;
-    color: white;
-    padding: 15px 32px;
-    text-align: center;
-    text-decoration: none;
-    display: inline;
-    font-size: 16px;
+.v-enter-active,
+.v-leave-active {
+    transition: opacity 0.5s ease;
+}
+
+.v-enter-from,
+.v-leave-to {
+    opacity: 0;
 }
 </style>
